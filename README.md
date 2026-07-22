@@ -15,31 +15,59 @@ conventions, and [plan_phase_2.md](plan_phase_2.md) for what's deliberately not 
 
 ## Architecture
 
-```mermaid
-flowchart LR
-    subgraph Frontend["frontend (React + Vite, :5173)"]
-        UI[Chat UI]
-    end
-    subgraph Backend["backend (FastAPI + LangGraph, :8000)"]
-        Agent[ReAct agent]
-    end
-    subgraph MCP["mcp_server (FastMCP, :8001)"]
-        Tools[12 tools]
-    end
-    subgraph Data["data/ + store/"]
-        JSON[(JSON files)]
-        SQL[(SQLite)]
-        Vec[(Chroma)]
-    end
-    Ollama[("Ollama\ngpt-oss:120b-cloud +\nnomic-embed-text")]
+Three independent services, each its own process/port — `backend` never imports `mcp_server`'s tool code,
+it only ever talks to it over HTTP as an MCP client, the way it would talk to a real internal data API:
 
-    UI -- "POST /chat (SSE)" --> Agent
-    Agent -- MCP over HTTP --> Tools
-    Agent -- chat completions --> Ollama
-    Tools --> JSON
-    Tools --> SQL
-    Tools --> Vec
-    Vec -. embeddings .-> Ollama
+```mermaid
+flowchart TB
+    subgraph FE["frontend :5173  (React + Vite + Tailwind)"]
+        UI["Sidebar · ChatWindow · ActivityPanel"]
+    end
+
+    subgraph BE["backend :8000  (FastAPI + LangGraph)"]
+        Agent["create_react_agent<br/>(skills/*.md → system prompt)"]
+    end
+
+    subgraph MCP["mcp_server :8001  (FastMCP, streamable-http)"]
+        direction LR
+        subgraph catJSON["direct JSON"]
+            j1[get_competitor_information]
+            j2[get_previous_pricing_actions]
+            j3[get_customer_feedback_metrics]
+            j4[list_market_intelligence]
+        end
+        subgraph catFile["direct file"]
+            f1[get_market_intelligence_doc]
+        end
+        subgraph catSQL["typed SQLite"]
+            s1[get_claims_performance]
+            s2[get_regional_weather_claims]
+            s3[get_conversion_performance]
+        end
+        subgraph catVec["vector search"]
+            v1[search_unstructured_sources]
+        end
+        subgraph catMath["deterministic math"]
+            m1[calculate_percentage_change]
+            m2[calculate_trend]
+            m3[calculate_summary_stats]
+        end
+    end
+
+    JSONFiles[("data/*.json")]
+    SQLite[("store/pricing_copilot.db")]
+    Chroma[("store/chroma/")]
+    Ollama[("Ollama<br/>gpt-oss:120b-cloud +<br/>nomic-embed-text")]
+
+    UI <-->|"POST /chat (SSE)"| Agent
+    Agent <-->|"MCP over HTTP"| catJSON & catFile & catSQL & catVec & catMath
+    Agent <-->|chat completions| Ollama
+    catJSON --> JSONFiles
+    catFile --> JSONFiles
+    catSQL --> SQLite
+    catVec --> Chroma
+    Chroma -.embeddings.-> Ollama
+    m1 ~~~ m2 ~~~ m3
 ```
 
 ## Request flow
@@ -64,6 +92,29 @@ sequenceDiagram
     B-->>F: SSE: final_answer (structured PricingAnalysis)
     F-->>U: renders trace cards + answer cards
 ```
+
+## Data retrieval design
+
+Every source file's retrieval technique was picked individually by its actual shape, not assigned by a
+blanket rule — two sources even fan out into more than one technique because a single file can contain
+both predictably-structured fields and genuine free text:
+
+```mermaid
+flowchart LR
+    S1[claims_performance.json] --> SQL1[get_claims_performance]
+    S1 --> SQL2[get_regional_weather_claims]
+    S2[conversion_performance.json] --> SQL3[get_conversion_performance]
+    S3[competitor_information.json] --> J1[get_competitor_information]
+    S4a["previous_pricing_actions.json<br/>(structured fields)"] --> J2[get_previous_pricing_actions]
+    S4b["previous_pricing_actions.json<br/>(rationale text)"] -.semantic.-> V1[search_unstructured_sources]
+    S5a["customer_feedback.json<br/>(metrics)"] --> J3[get_customer_feedback_metrics]
+    S5b["customer_feedback.json<br/>(comments)"] -.semantic.-> V1
+    S6a["market_intelligence.json<br/>(index)"] --> J4[list_market_intelligence]
+    S6b["market_intelligence/*.md"] -.semantic.-> V1
+    S6b --> F1[get_market_intelligence_doc]
+```
+
+See [IMPLEMENTATION.md](IMPLEMENTATION.md) §2 for the full source-by-source rationale.
 
 ## Tech stack
 
