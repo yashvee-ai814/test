@@ -11,12 +11,8 @@ surface than the source data.
 
 import json
 import sqlite3
-from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
-DATA_DIR = ROOT / "data"
-STORE_DIR = ROOT / "store"
-DB_PATH = STORE_DIR / "pricing_copilot.db"
+from paths import DATA_DIR, DB_PATH, ROOT, STORE_DIR
 
 SCHEMA = """
 CREATE TABLE claims_performance (
@@ -87,6 +83,12 @@ def build() -> None:
            VALUES (:period, :region, :weather_related_claim_count)""",
         claims["regional_weather_claims"],
     )
+    # average_pcw_rank is only present on Price Comparison Website rows in the source
+    # data (the other channels genuinely have no "rank" concept) - normalize to a
+    # present-but-NULL column for the other rows rather than editing the source JSON.
+    conversion_records = [
+        {**r, "average_pcw_rank": r.get("average_pcw_rank")} for r in conversion["records"]
+    ]
     conn.executemany(
         """INSERT INTO conversion_performance
            (period, channel, segment, quotes_count, conversions_count, conversion_rate_pct,
@@ -94,7 +96,7 @@ def build() -> None:
            VALUES (:period, :channel, :segment, :quotes_count, :conversions_count,
                    :conversion_rate_pct, :average_quoted_premium_gbp, :average_bound_premium_gbp,
                    :average_pcw_rank)""",
-        conversion["records"],
+        conversion_records,
     )
     conn.commit()
 

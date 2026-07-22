@@ -12,3 +12,4 @@ wheels/
 # Generated data stores
 store/
 .DS_Store
+.claude/scheduled_tasks.lock

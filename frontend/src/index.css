@@ -1,0 +1,37 @@
+@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap");
+
+/* Class-based dark mode toggled by ThemeContext, rather than Tailwind v4's
+   default prefers-color-scheme-only "dark:" variant. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Playfair Display", ui-serif, Georgia, serif;
+
+  /* Aviva-red accent scale, adapted from the #a5122a used earlier this
+     session rather than the amber/gold of the reference project. */
+  --color-brand-50: #fdf1f2;
+  --color-brand-100: #fbe0e3;
+  --color-brand-400: #e15a72;
+  --color-brand-500: #c41230;
+  --color-brand-600: #a5122a;
+  --color-brand-700: #7d0e20;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #e15a72, #c41230, #7d0e20);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
