@@ -11,38 +11,80 @@ once the build was working end to end, for anyone picking this up next
 
 Three independent processes/services, so the project doubles as a working
 example of wiring an LLM agent to a real internal data API over MCP rather
-than importing tool code directly:
+than importing tool code directly. See the root [README.md](README.md) for
+the request-flow sequence diagram; the diagram below is the same 3 services
+but expanded to show every tool and where it reads from:
 
-```
-┌─────────────┐   streamable-http    ┌──────────────┐   SSE (streamed)   ┌───────────┐
-│  mcp_server  │ ◄──────────────────  │  agent_api    │ ◄─────────────────│ frontend  │
-│  (FastMCP)   │  MCP protocol         │  (FastAPI +   │  tool_call/        │ (React +  │
-│  port 8001   │ ──────────────────►  │  LangGraph)   │  tool_result/      │  Vite)    │
-│              │   tool results        │  port 8000    │  final_answer      │ port 5173 │
-└──────┬───────┘                       └──────┬────────┘                    └───────────┘
-       │                                       │
-       ▼                                       ▼
- data/ (JSON + markdown)              Ollama (gpt-oss:120b-cloud
- store/pricing_copilot.db              for chat, nomic-embed-text
- store/chroma/ (vector index)          for embeddings)
+```mermaid
+flowchart TB
+    subgraph FE["frontend :5173  (React + Vite + Tailwind)"]
+        UI["Sidebar · ChatWindow · ActivityPanel"]
+    end
+
+    subgraph BE["backend :8000  (FastAPI + LangGraph)"]
+        Agent["create_react_agent<br/>(skills/*.md → system prompt)"]
+    end
+
+    subgraph MCP["mcp_server :8001  (FastMCP, streamable-http)"]
+        direction LR
+        subgraph catJSON["direct JSON"]
+            j1[get_competitor_information]
+            j2[get_previous_pricing_actions]
+            j3[get_customer_feedback_metrics]
+            j4[list_market_intelligence]
+        end
+        subgraph catFile["direct file"]
+            f1[get_market_intelligence_doc]
+        end
+        subgraph catSQL["typed SQLite"]
+            s1[get_claims_performance]
+            s2[get_regional_weather_claims]
+            s3[get_conversion_performance]
+        end
+        subgraph catVec["vector search"]
+            v1[search_unstructured_sources]
+        end
+        subgraph catMath["deterministic math"]
+            m1[calculate_percentage_change]
+            m2[calculate_trend]
+            m3[calculate_summary_stats]
+        end
+    end
+
+    JSONFiles[("data/*.json")]
+    SQLite[("store/pricing_copilot.db")]
+    Chroma[("store/chroma/")]
+    Ollama[("Ollama<br/>gpt-oss:120b-cloud +<br/>nomic-embed-text")]
+
+    UI <-->|"POST /chat (SSE)"| Agent
+    Agent <-->|"MCP over HTTP"| catJSON & catFile & catSQL & catVec & catMath
+    Agent <-->|chat completions| Ollama
+    catJSON --> JSONFiles
+    catFile --> JSONFiles
+    catSQL --> SQLite
+    catVec --> Chroma
+    Chroma -.embeddings.-> Ollama
+    m1 ~~~ m2 ~~~ m3
 ```
 
 - **`mcp_server`** — a FastMCP server exposing 12 tools across 4 retrieval
-  techniques (§3). It owns all access to `data/`, `store/pricing_copilot.db`,
+  techniques (§2, §4). It owns all access to `data/`, `store/pricing_copilot.db`,
   and `store/chroma/` — nothing outside this process touches those files
   directly. Runs standalone on its own port so it's a genuine service the
   agent talks to over the network, not an in-process import.
-- **`agent_api`** — a FastAPI service running a LangGraph ReAct agent
+- **`backend`** — a FastAPI service running a LangGraph ReAct agent
   (`langgraph.prebuilt.create_react_agent`) bound to the MCP server's tools
   via `langchain-mcp-adapters`, with a system prompt assembled from
   `skills/*.md`. `POST /chat` streams the agent's steps to the client over
   Server-Sent Events as they happen (tool calls, tool results, final answer)
   rather than blocking until the whole run finishes.
-- **`frontend`** — a single-page React app: a question box, a live trace of
-  what's being retrieved, and the final structured answer.
+- **`frontend`** — a three-column React app: session-history sidebar, a
+  scrolling chat column where each answer renders as a structured card, and
+  a right-hand panel that's both a live retrieval trace and a static
+  reference of the tool catalog.
 
 One shared `pyproject.toml`/`uv` environment covers `mcp_server` and
-`agent_api` — they're separated at the process/network level (that's what
+`backend` — they're separated at the process/network level (that's what
 makes this a microservice architecture), not at the dependency-tree level,
 since splitting Python packages for a 2-service demo would add packaging
 overhead with no runtime benefit.
@@ -65,6 +107,45 @@ actual shape, not assigned by rough category:
 | `unstructured_market_intelligence.json` (index) | Direct JSON query | 18 small structured records, filter-style questions |
 | `unstructured_market_intelligence/*.md` (prose) | Vector DB + direct file read | Genuinely unstructured; semantic search for discovery, raw file for drill-down |
 | *(any retrieved numeric series)* | Deterministic Python | LLMs make arithmetic errors on multi-point series |
+
+The same information as a graph — note the two sources that fan out into more
+than one technique, which is the core "pick the technique per query shape,
+not per file" idea in one picture:
+
+```mermaid
+flowchart LR
+    S1[claims_performance.json]
+    S2[conversion_performance.json]
+    S3[competitor_information.json]
+    S4a["previous_pricing_actions.json<br/>(structured fields)"]
+    S4b["previous_pricing_actions.json<br/>(rationale text)"]
+    S5a["customer_feedback.json<br/>(monthly_metrics)"]
+    S5b["customer_feedback.json<br/>(verbatim_comments)"]
+    S6a["unstructured_market_intelligence.json<br/>(index)"]
+    S6b["unstructured_market_intelligence/*.md<br/>(prose)"]
+
+    SQL1[get_claims_performance]
+    SQL2[get_regional_weather_claims]
+    SQL3[get_conversion_performance]
+    J1[get_competitor_information]
+    J2[get_previous_pricing_actions]
+    J3[get_customer_feedback_metrics]
+    J4[list_market_intelligence]
+    V1[search_unstructured_sources]
+    F1[get_market_intelligence_doc]
+
+    S1 --> SQL1
+    S1 --> SQL2
+    S2 --> SQL3
+    S3 --> J1
+    S4a --> J2
+    S4b -.semantic.-> V1
+    S5a --> J3
+    S5b -.semantic.-> V1
+    S6a --> J4
+    S6b -.semantic.-> V1
+    S6b --> F1
+```
 
 Two design refinements came out of reviewing the data before building against
 it (see `mcp_server/sql_tools.py` and `build_vector_index.py`):
@@ -150,7 +231,7 @@ to call and how, output shape, one worked example grounded in
 `demo_scenarios.json` — so a skill file is directly checkable against real
 data rather than aspirational prose.
 
-For this phase, `agent_api/skill_loader.py` concatenates all 7 files into
+For this phase, `backend/skill_loader.py` concatenates all 7 files into
 one system prompt for a single `create_react_agent`. This was deliberately
 built as a function that accepts a subset of skill names, not a hardcoded
 constant, specifically so Phase 2's multi-agent split (see
@@ -159,12 +240,12 @@ tool subset without touching this file.
 
 ## 6. Structured final answer, and cards in the UI
 
-`agent_api/schema.py` defines `PricingAnalysis` (`summary`, `trends`,
+`backend/schema.py` defines `PricingAnalysis` (`summary`, `trends`,
 `investigation_areas`, `recommendation`, `reasoning` - one field per
 post-retrieval skill), and the frontend renders each as its own card instead
 of one free-text blob. The retrieval trace is similarly split into per-call
 cards tagged with a `category` (`json`/`file`/`sql`/`vector`/`math`, from
-`agent_api/agent.py`'s `TOOL_CATEGORIES`) so the four retrieval techniques in
+`backend/agent.py`'s `TOOL_CATEGORIES`) so the four retrieval techniques in
 §4 are visibly distinguishable while the demo runs, not just documented here.
 
 Getting the structured final answer out of the model reliably took two
@@ -177,17 +258,33 @@ either. Both are quirks in a code path this project doesn't otherwise
 exercise. The working approach instead reuses the exact mechanism already
 proven reliable all session (the final free-text ReAct turn): the system
 prompt asks the model to emit JSON matching `PricingAnalysis` in its last
-message, and `agent_api/agent.py`'s `_parse_final_answer` parses it
+message, and `backend/agent.py`'s `_parse_final_answer` parses it
 client-side via `PydanticOutputParser`, falling back to putting the raw text
 in `recommendation` if parsing ever fails rather than crashing the turn.
 
-## 7. Known limitation
+## 7. Repo conventions and UI (Phase 1b)
+
+The `agent_api/` service was renamed to `backend/` to match the "frontend / backend / MCP server" framing
+used throughout the project. Repo-level conventions were formalized this round, inspired by a separate
+reference project's structure (a single root `CLAUDE.md` "project constitution," per-service `README.md`s,
+a root `README.md` with Mermaid architecture/sequence diagrams, a root `.env.example`) — see `CLAUDE.md` for
+the canonical folder structure and conventions, and the root `README.md` for the diagrams.
+
+The frontend was rebuilt as a three-column chat interface (Tailwind CSS v4, Inter + Playfair Display,
+dark/light theme) instead of a single-column form-and-results page: a session-history sidebar, a scrolling
+chat column where each `PricingAnalysis` renders as one structured card per turn, and a right-hand
+`ActivityPanel` that doubles as both a live per-turn retrieval trace and a static reference of all 12 MCP
+tools grouped by retrieval technique. The backend remains stateless — each question is answered
+independently; the frontend just displays the running list of turns for a conversational feel, rather than
+the backend gaining real cross-turn memory (that's still a Phase 2 concern, if wanted at all).
+
+## 8. Known limitation
 
 `gpt-oss:120b-cloud` (Ollama's hosted proxy model) occasionally returns a
 transient 500 on longer, tool-heavy conversations (observed after 4-5
 sequential tool calls in one turn). There's no per-call retry hook that
 survives `create_react_agent`'s `bind_tools()` wrapping, so
-`agent_api/agent.py` retries the whole turn (up to 3 attempts) rather than a
+`backend/agent.py` retries the whole turn (up to 3 attempts) rather than a
 single failed call. Switching to a fully local model via the
 `OLLAMA_CHAT_MODEL` env var avoids this entirely if it becomes disruptive
 during a live demo.

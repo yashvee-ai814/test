@@ -1,39 +1,138 @@
-# Aviva Pricing Analyst Copilot — Project Context
+# Pricing Analyst Copilot — Project Constitution
 
-## The challenge
+This file is the project/dev-facing reference for this repo — conventions, structure, and commands for
+anyone (human or Claude Code) working on the code. It is a different layer from `skills/*.md`, which is
+the **agent's own runtime instruction set**, loaded by `backend/skill_loader.py` into the LLM's system
+prompt at request time. Read `skills/` to understand how the agent behaves; read this file to understand
+how the repo is put together.
 
-This repo is working towards Challenge B in [challenge.md](challenge.md): build an AI agent that acts as a **Pricing Analyst Copilot**, bringing together information from multiple sources to generate and explain pricing recommendations. Required capabilities: retrieve from multiple sources, summarise findings, highlight trends, identify areas needing investigation, recommend pricing actions, explain the reasoning, and support continuous evaluation / model drift monitoring. Bonus: specialist agents collaborating (Market Intelligence Agent, Claims Analysis Agent, Conversion Analysis Agent, Recommendation Agent). Needs to be presentable as a 15-20 min demo.
+## What this is
 
-## Current state
+Challenge B ([challenge.md](challenge.md)): an AI agent that acts as a Pricing Analyst Copilot for Aviva UK
+Private Car Motor Insurance, bringing together claims, conversion, competitor, market-intelligence,
+customer-feedback, and prior-pricing-action data to generate and explain pricing recommendations. Full
+design rationale is in [IMPLEMENTATION.md](IMPLEMENTATION.md); forward-looking work (multi-agent split,
+continuous evaluation) is in [plan_phase_2.md](plan_phase_2.md).
 
-Only the synthetic data has been built so far — **no application/agent code exists yet**, and no tech stack has been chosen. The domain is UK Private Car Motor Insurance, Aviva-flavoured. All of it is deliberately internally consistent and cross-checked (see "Ground rules" below) rather than just plausible-looking.
+## Tech stack
 
-## Data layout (`data/`)
+| Concern | Choice |
+|---|---|
+| MCP server | Python, [FastMCP](https://gofastmcp.com), `streamable-http` transport |
+| Backend | Python, FastAPI, [LangGraph](https://langchain-ai.github.io/langgraph/) (`create_react_agent`), [langchain-mcp-adapters](https://github.com/langchain-ai/langchain-mcp-adapters) |
+| LLM | [Ollama](https://ollama.com), default `gpt-oss:120b-cloud` (chat), `nomic-embed-text` (embeddings) — swappable via env vars |
+| Structured data | SQLite (typed queries only, no raw SQL) |
+| Unstructured data | [Chroma](https://www.trychroma.com) vector store |
+| Frontend | React 19 + Vite + TypeScript + Tailwind CSS v4 |
+| Python package management | [uv](https://docs.astral.sh/uv/), one shared `pyproject.toml` for `mcp_server/` + `backend/` |
+| Frontend package management | npm |
 
-- **`claims_performance.json`** — monthly claims by segment (`Young Driver (17-25)`, `Standard (26-45)`, `Experienced (46-65)`, `Senior (66+)`): frequency, severity, loss ratio, earned premium, over a 12-month window (2025-07 to 2026-06). Loss ratios are realistic (56-96% range, Young Driver worsening over the window). Also contains a **`regional_weather_claims`** array — an independent region-level axis (separate from the per-segment `region` field) with a deliberate storm-driven spike in Oct/Nov 2025 for North of England & Scotland & NI only.
-- **`conversion_performance.json`** — quote-to-bind conversion by channel (PCW / Direct / Broker) × the **same 4 segments** as claims. Segment name strings must match claims exactly — the two files are meant to be joined on that field. PCW rows also carry `average_pcw_rank`.
-- **`competitor_information.json`** — quarterly premium benchmarking vs 6 named UK competitors across 6 rating profiles (`RP-01`..`RP-06`). RP-01 (young-driver profile) and RP-04 (senior profile) carry a deliberate extra Aviva-specific drift so their rank trend agrees with the matching segment's story in `conversion_performance.json`, rather than drifting independently.
-- **`unstructured_market_intelligence.json`** — a structured *index* (18 records, `MI-001`..`MI-018`: id/date/source/sentiment/tags). Its `content` field is a one-line summary only.
-- **`unstructured_market_intelligence/`** — the genuinely unstructured data: 18 markdown files (`MI-001_*.md` .. `MI-018_*.md`), one real "raw document" per intel item (news article / regulatory bulletin / analyst report / social post), 1:1 with the JSON index by id. Every number in these files was checked to match the JSON exactly.
-- **`previous_pricing_actions.json`** — 10 historical pricing/underwriting actions (`PA-2024-01`..`PA-2026-03`) with rationale and a logged `observed_impact_after_3_months`. The most recent action's impact fields are `null` on purpose (too recent to measure) — not a data gap to fill in.
-- **`customer_feedback.json`** — monthly NPS/CSAT/complaint-volume metrics plus 10 verbatim comments (`CF-001`..`CF-010`).
-- **`demo_scenarios.json`** — 10 presentation scenarios (`SC-01`..`SC-10`) for demoing the finished agent to a pricing-analyst audience. Each cites specific ids/numbers from the other files and carries a `verification_note` explaining exactly what was checked against the real data and what the data can't support. **Read a scenario's `verification_note` before trusting its narrative claims** — several numbers in early drafts were wrong and had to be corrected against the actual files.
+## Canonical folder structure
 
-## Ground rules (established the hard way — don't relearn these)
+```
+data/                          Pristine synthetic source data (JSON + markdown) — never write derived state here
+store/                         Generated, gitignored: SQLite db + Chroma index
+mcp_server/                    MICROSERVICE 1 — FastMCP, streamable-http, port 8001
+  paths.py                       Shared path constants
+  build_db.py                    JSON → SQLite loader + verification
+  build_vector_index.py          Embeds unstructured sources into Chroma
+  json_tools.py                  Direct-JSON query tools
+  file_tools.py                  Direct file-read tool
+  sql_tools.py                   Typed SQLite query tools (no raw SQL)
+  vector_tools.py                Vector semantic search tool
+  math_tools.py                  Deterministic calculation tools
+  server.py                      Registers all 12 tools, runs the MCP server
+skills/                        Agent runtime instructions — read by backend/skill_loader.py, not by humans running the app
+  master_orchestrator.md         Tool inventory, workflow, hard constraints
+  retrieve_information.md, summarise_findings.md, highlight_trends.md,
+  identify_investigation_areas.md, recommend_pricing_actions.md, explain_reasoning.md
+backend/                       MICROSERVICE 2 — FastAPI, port 8000
+  schema.py                      PricingAnalysis (structured final-answer shape)
+  llm.py                         ChatOllama config
+  mcp_client.py                  MCP client pointed at mcp_server's HTTP URL
+  skill_loader.py                Assembles the system prompt from skills/*.md
+  agent.py                       The LangGraph agent + SSE event generator
+  app.py                         FastAPI app: POST /chat (SSE), GET /health
+  run_cli.py                     Dev/test script: runs the agent without HTTP
+frontend/                      MICROSERVICE 3 — React + Vite, port 5173
+  src/
+    api.ts                        SSE client + AgentEvent/ToolCategory types (the data contract with backend/)
+    types.ts                      Shared frontend types (Turn, TraceCall, Answer)
+    context/ThemeContext.tsx       Light/dark toggle
+    components/layout/             Header, Sidebar
+    components/chat/               WelcomeScreen, ChatWindow, ChatInput, MessageBubble, PricingAnalysisCard, ToolCallBadge
+    components/trace/              ActivityPanel (live trace + static tool catalog)
+    App.tsx                        Layout shell wiring the above together
+pyproject.toml                 uv-managed deps, shared by mcp_server/ + backend/
+plan_phase_2.md                Forward-looking: 4-agent split, continuous evaluation/model drift
+IMPLEMENTATION.md              HLD, retrieval-technique-per-source table, tool catalog, design rationale
+```
 
-- **Never let new narrative content (scenarios, docs, prompts) assert a number that isn't actually in the data.** Earlier drafts described loss ratios as "95%+" when the real formula produced ~17-26%, and referenced a "Senior" conversion segment that didn't exist under that name. Both were only caught by writing a small script that loads the JSON and checks the specific claim — not by re-reading the prose. Do this before building anything (prompts, eval sets, UI copy) on top of the data.
-- Segment name strings (`"Young Driver (17-25)"`, `"Standard (26-45)"`, `"Experienced (46-65)"`, `"Senior (66+)"`) must stay byte-identical across `claims_performance.json` and `conversion_performance.json`.
-- Before claiming two data files "tell the same story" (e.g. a segment's claims trend and its competitor rank both worsening), actually check it — independently-generated random data can easily drift in unrelated directions even when the narrative intends otherwise.
-- Check that a field genuinely supports the comparison you want before using it: `claims_performance.json`'s per-segment `region` field is just a rotating label, not a real per-region breakdown — `regional_weather_claims` is the real independent regional axis.
-- If regenerating any of the JSON files, re-verify everything afterward (segment-name match, id cross-references between `demo_scenarios.json` and the source files, numeric sanity ranges) rather than assuming a re-run is safe — inserting new randomness earlier in a generator script shifts every downstream draw.
+## Code conventions
 
-## Not yet built
+- **MCP tools are typed and parametrized, never raw SQL or unsanitized file/glob input.** `sql_tools.py`
+  has no `run_sql_query`-style escape hatch by design; `file_tools.py` validates its `id` parameter against
+  a strict pattern before it ever reaches a filesystem call.
+- **The LLM never does arithmetic.** Any percentage change, trend, or summary statistic the agent states
+  must come from `math_tools.py`, not be estimated from reading a series of numbers.
+- **Tool docstrings state exact valid enum values** (segment names, channel names, etc.), not just types —
+  the agent will otherwise guess plausible-but-wrong values and silently get empty results.
+- **Every MCP tool returns compact, pre-filtered JSON, never a whole source file.** This — not prompt
+  instructions — is the actual mechanism that keeps the LLM's context minimal.
+- **Skills, not hardcoded prompts.** `backend/skill_loader.py` builds the system prompt from `skills/*.md`
+  at request time. Adding/changing agent behavior means editing a skill file, not `agent.py`.
+- **React components are `.tsx`, styled with Tailwind utility classes** — no separate `.css` files per
+  component, no CSS-in-JS, no component library. Icons are hand-drawn inline SVGs, matching the rest of the
+  codebase's "minimum dependencies" bias.
+- **No raw model-only "content" strings for the final answer.** The agent's last turn is parsed into the
+  `PricingAnalysis` schema (`backend/schema.py`) so the frontend renders distinct summary/trends/
+  investigation-areas/recommendation/reasoning sections — see `IMPLEMENTATION.md` §6 for why this goes
+  through JSON-in-final-turn-parsed-client-side rather than LangGraph's built-in `response_format`.
+- **Comments only when the WHY is non-obvious** (a workaround for a specific model quirk, a security
+  invariant, a subtle ordering requirement) — not restating what the code already says.
 
-- The actual agent/application: retrieval across the 6 sources above, summarisation, trend-highlighting, recommendation generation with explained reasoning, and the continuous-evaluation/model-drift capability.
-- The bonus multi-agent architecture referenced in `demo_scenarios.json`'s `specialist_agents_involved` fields (Market Intelligence Agent, Claims Analysis Agent, Conversion Analysis Agent, Recommendation Agent) — these are planned roles the scenarios were written around, not implemented agents.
-- No tech stack, framework, or UI has been chosen yet — open to discussion.
+## Data ground rules (established generating `data/` — don't relearn these)
 
-## Working style
+- **Never let new content (prompts, skills, UI copy) assert a number that isn't actually in the data.**
+  Verify with a script before trusting a claim, not by eyeballing.
+- Segment name strings (`"Young Driver (17-25)"`, `"Standard (26-45)"`, `"Experienced (46-65)"`,
+  `"Senior (66+)"`) must stay byte-identical across `claims_performance.json` and `conversion_performance.json`.
+- `claims_performance.json`'s per-record `region` field is a rotating label, **not** a real per-region
+  breakdown — `regional_weather_claims` is the genuine regional axis. Both `sql_tools.py`'s docstring and
+  `master_orchestrator.md` call this out explicitly so the agent doesn't misuse it.
+- `conversion_performance.json`'s `average_pcw_rank` is genuinely absent (not `null`) on non-PCW-channel
+  rows — handled in the SQLite loader via `.get()`, not by editing the source JSON.
+- If regenerating any source JSON, re-verify row counts, segment-name matches, and id cross-references
+  afterward (see `mcp_server/build_db.py`'s own verification step for the pattern to follow).
 
-- The user wants any synthetic/demo content to be provably grounded in the actual data files — verify with a script, don't eyeball it, and say explicitly what a check can't confirm rather than overstating confidence.
-- Keep each data source as its own file/folder rather than merging them.
+## Local dev commands
+
+```bash
+# One-time data build
+uv run mcp_server/build_db.py
+uv run mcp_server/build_vector_index.py
+
+# Run all 3 services (separate terminals)
+uv run mcp_server/server.py
+uv run uvicorn app:app --app-dir backend --port 8000
+cd frontend && npm run dev
+
+# Quick agent test without the frontend/HTTP layer
+uv run backend/run_cli.py "why is young driver loss ratio worsening?"
+```
+
+## Git workflow
+
+- `main` — the working trunk.
+- `data-baseline` — a fixed pointer to the commit right after the synthetic data + initial scaffolding, so
+  the pristine data is always recoverable independent of where `main` goes.
+- Feature work happens on `feature/*` branches off `main`.
+- Only create commits when explicitly asked — this repo's history should reflect deliberate checkpoints,
+  not every intermediate edit.
+
+## Current state / not yet built
+
+Phase 1 (this repo, as it stands) is fully built and verified end to end: all 3 services run, the agent
+retrieves across all 6 data sources via the appropriate technique, computes trends deterministically, and
+returns a structured, cited recommendation. Not yet built (see `plan_phase_2.md`): the bonus 4-specialist-
+agent LangGraph split, and continuous evaluation / model-drift monitoring.

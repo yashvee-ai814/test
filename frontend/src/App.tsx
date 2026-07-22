@@ -1,207 +1,124 @@
-import { useEffect, useRef, useState } from "react";
-import { streamChat, type AgentEvent, type ToolCategory } from "./api";
-import "./App.css";
+import { useRef, useState } from "react";
+import { streamChat, type AgentEvent } from "./api";
+import type { Turn } from "./types";
+import { ThemeProvider } from "./context/ThemeContext";
+import { Header } from "./components/layout/Header";
+import { Sidebar } from "./components/layout/Sidebar";
+import { WelcomeScreen } from "./components/chat/WelcomeScreen";
+import { ChatWindow } from "./components/chat/ChatWindow";
+import { ChatInput } from "./components/chat/ChatInput";
+import { ActivityPanel } from "./components/trace/ActivityPanel";
 
-type TraceCall = {
-  id: string;
-  tool: string;
-  category: ToolCategory;
-  args: Record<string, unknown>;
-  result?: unknown;
-};
+function newTurn(question: string): Turn {
+  return {
+    id: crypto.randomUUID(),
+    question,
+    trace: [],
+    answer: null,
+    error: null,
+    isRunning: true,
+  };
+}
 
-type Answer = {
-  summary: string[];
-  trends: string[];
-  investigationAreas: string[];
-  recommendation: string;
-  reasoning: string;
-};
-
-const CATEGORY_LABEL: Record<ToolCategory, string> = {
-  json: "JSON",
-  file: "File",
-  sql: "SQL",
-  vector: "Vector",
-  math: "Math",
-  other: "Other",
-};
-
-const EXAMPLE_QUESTIONS = [
-  "Why is the loss ratio for our young driver segment getting worse, and what should we do about it?",
-  "What are customers saying about renewal price increases?",
-  "How does our young driver pricing compare to competitors?",
-];
-
-function App() {
-  const [question, setQuestion] = useState("");
-  const [trace, setTrace] = useState<TraceCall[]>([]);
-  const [answer, setAnswer] = useState<Answer | null>(null);
-  const [error, setError] = useState("");
-  const [isRunning, setIsRunning] = useState(false);
+function AppShell() {
+  const [turns, setTurns] = useState<Turn[]>([]);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const abortRef = useRef<AbortController | null>(null);
 
-  // Cancel any in-flight request if the component unmounts mid-stream.
-  useEffect(() => () => abortRef.current?.abort(), []);
+  const isRunning = turns.some((t) => t.isRunning);
+  const activeTurn = turns.find((t) => t.id === activeId) ?? turns[turns.length - 1];
 
-  async function ask(q: string) {
-    if (!q.trim() || isRunning) return;
+  function updateTurn(id: string, patch: Partial<Turn>) {
+    setTurns((prev) => prev.map((t) => (t.id === id ? { ...t, ...patch } : t)));
+  }
+
+  async function ask(question: string) {
+    if (!question.trim() || isRunning) return;
+    const turn = newTurn(question);
+    setTurns((prev) => [...prev, turn]);
+    setActiveId(turn.id);
+
     const controller = new AbortController();
     abortRef.current = controller;
-    setIsRunning(true);
-    setTrace([]);
-    setAnswer(null);
-    setError("");
 
     try {
-      for await (const event of streamChat(q, controller.signal) as AsyncGenerator<AgentEvent>) {
+      for await (const event of streamChat(question, controller.signal) as AsyncGenerator<AgentEvent>) {
         if (event.type === "tool_call") {
-          setTrace((t) => [
-            ...t,
-            { id: event.id, tool: event.tool, category: event.category, args: event.args },
-          ]);
+          setTurns((prev) =>
+            prev.map((t) =>
+              t.id === turn.id
+                ? { ...t, trace: [...t.trace, { id: event.id, tool: event.tool, category: event.category, args: event.args }] }
+                : t,
+            ),
+          );
         } else if (event.type === "tool_result") {
-          setTrace((t) => t.map((c) => (c.id === event.id ? { ...c, result: event.result } : c)));
+          setTurns((prev) =>
+            prev.map((t) =>
+              t.id === turn.id
+                ? { ...t, trace: t.trace.map((c) => (c.id === event.id ? { ...c, result: event.result } : c)) }
+                : t,
+            ),
+          );
         } else if (event.type === "retry") {
-          // Everything since the start of this stream belongs to a failed
-          // attempt the agent is discarding - drop it rather than showing a
-          // duplicated/inconsistent trace once the retry's own events land.
-          setTrace([]);
+          updateTurn(turn.id, { trace: [] });
         } else if (event.type === "final_answer") {
-          setAnswer({
-            summary: event.summary,
-            trends: event.trends,
-            investigationAreas: event.investigation_areas,
-            recommendation: event.recommendation,
-            reasoning: event.reasoning,
+          updateTurn(turn.id, {
+            answer: {
+              summary: event.summary,
+              trends: event.trends,
+              investigationAreas: event.investigation_areas,
+              recommendation: event.recommendation,
+              reasoning: event.reasoning,
+            },
+            isRunning: false,
           });
         } else if (event.type === "error") {
-          setError(event.message);
+          updateTurn(turn.id, { error: event.message, isRunning: false });
         }
       }
     } catch (err) {
       if (!controller.signal.aborted) {
-        setError(err instanceof Error ? err.message : String(err));
+        updateTurn(turn.id, {
+          error: err instanceof Error ? err.message : String(err),
+          isRunning: false,
+        });
       }
     } finally {
-      setIsRunning(false);
+      updateTurn(turn.id, { isRunning: false });
     }
   }
 
   return (
-    <div className="app">
-      <header>
-        <h1>Pricing Analyst Copilot</h1>
-        <p className="subtitle">Aviva UK Private Car Motor Insurance — demo</p>
-      </header>
-
-      <form
-        className="question-form"
-        onSubmit={(e) => {
-          e.preventDefault();
-          ask(question);
-        }}
-      >
-        <input
-          value={question}
-          onChange={(e) => setQuestion(e.target.value)}
-          placeholder="Ask a pricing question..."
-          aria-label="Pricing question"
-          disabled={isRunning}
+    <div className="flex h-screen flex-col bg-slate-50 dark:bg-[linear-gradient(160deg,_#0a0f1a_0%,_#1a0f14_45%,_#0a0f1a_100%)]">
+      <Header />
+      <div className="flex flex-1 overflow-hidden">
+        <Sidebar
+          turns={turns.map((t) => ({ id: t.id, question: t.question }))}
+          activeId={activeId}
+          onSelect={setActiveId}
+          onNewQuestion={() => inputRef.current?.focus()}
         />
-        <button type="submit" disabled={isRunning}>
-          {isRunning ? "Working..." : "Ask"}
-        </button>
-      </form>
 
-      <div className="examples">
-        {EXAMPLE_QUESTIONS.map((q) => (
-          <button
-            key={q}
-            className="example-chip"
-            disabled={isRunning}
-            onClick={() => {
-              setQuestion(q);
-              ask(q);
-            }}
-          >
-            {q}
-          </button>
-        ))}
+        <div className="flex flex-1 flex-col overflow-hidden">
+          {turns.length === 0 ? (
+            <WelcomeScreen onAsk={ask} />
+          ) : (
+            <ChatWindow turns={turns} />
+          )}
+          <ChatInput ref={inputRef} disabled={isRunning} onSubmit={ask} />
+        </div>
+
+        <ActivityPanel trace={activeTurn?.trace ?? []} />
       </div>
-
-      {trace.length > 0 && (
-        <section className="trace">
-          <h2>Retrieval trace</h2>
-          <div className="trace-cards">
-            {trace.map((call) => (
-              <div key={call.id} className={`trace-card cat-${call.category}`}>
-                <div className="trace-card-header">
-                  <span className="category-badge">{CATEGORY_LABEL[call.category]}</span>
-                  <code>{call.tool}</code>
-                  {call.result === undefined && <span className="pending">running…</span>}
-                </div>
-                <div className="trace-card-body">
-                  <div className="trace-args">{JSON.stringify(call.args)}</div>
-                  {call.result !== undefined && (
-                    <div className="trace-result">{JSON.stringify(call.result).slice(0, 220)}…</div>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {error && <div className="error">{error}</div>}
-
-      {answer && (
-        <section className="answer">
-          <h2>Answer</h2>
-          <div className="answer-cards">
-            <div className="answer-card">
-              <h3>Summary</h3>
-              <ul>
-                {answer.summary.map((line, i) => (
-                  <li key={i}>{line}</li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="answer-card">
-              <h3>Trends</h3>
-              <ul>
-                {answer.trends.map((line, i) => (
-                  <li key={i}>{line}</li>
-                ))}
-              </ul>
-            </div>
-
-            {answer.investigationAreas.length > 0 && (
-              <div className="answer-card">
-                <h3>Investigation areas</h3>
-                <ul>
-                  {answer.investigationAreas.map((line, i) => (
-                    <li key={i}>{line}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            <div className="answer-card recommendation">
-              <h3>Recommendation</h3>
-              <p>{answer.recommendation}</p>
-            </div>
-
-            <div className="answer-card">
-              <h3>Reasoning</h3>
-              <p>{answer.reasoning}</p>
-            </div>
-          </div>
-        </section>
-      )}
     </div>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <ThemeProvider>
+      <AppShell />
+    </ThemeProvider>
+  );
+}

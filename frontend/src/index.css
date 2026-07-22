@@ -1,5 +1,5 @@
-@import "tailwindcss";
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap");
+@import "tailwindcss";
 
 /* Class-based dark mode toggled by ThemeContext, rather than Tailwind v4's
    default prefers-color-scheme-only "dark:" variant. */
