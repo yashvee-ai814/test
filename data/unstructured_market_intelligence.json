@@ -1,0 +1,258 @@
+{
+  "dataset": "unstructured_market_intelligence",
+  "description": "Structured index of synthetic news, regulatory updates, analyst commentary and social media snippets relevant to UK motor insurance pricing. Each record's 'content' field is a summary of the full-text raw document at unstructured_market_intelligence/<id>_*.md (e.g. MI-004 -> unstructured_market_intelligence/MI-004_admiral-cuts-prices.md), which is the genuinely unstructured source an ingestion/retrieval pipeline would actually parse.",
+  "generated_for": "Aviva Pricing Analyst Copilot challenge - synthetic data only",
+  "records": [
+    {
+      "id": "MI-001",
+      "date": "2025-08-04",
+      "source": "ABI (Association of British Insurers) Press Release",
+      "type": "industry_report",
+      "title": "Motor premiums rise as repair costs climb",
+      "content": "The ABI's latest Motor Insurance Premium Tracker shows average premiums rose 8% year-on-year, driven by increased repair costs, higher parts prices linked to import tariffs, and a shortage of qualified technicians extending repair times.",
+      "sentiment": "negative",
+      "relevance_tags": [
+        "repair_costs",
+        "market_trend",
+        "premium_inflation"
+      ]
+    },
+    {
+      "id": "MI-002",
+      "date": "2025-08-19",
+      "source": "Twitter/X - consumer post",
+      "type": "social_media",
+      "title": "Customer complaint thread on renewal pricing",
+      "content": "Renewal quote from Aviva went up 34% with no claims or changes to my policy. Compared PCW and found cover elsewhere for 20% less. Feels like loyalty penalty again #insurance #priceduty.",
+      "sentiment": "negative",
+      "relevance_tags": [
+        "renewal_pricing",
+        "customer_sentiment",
+        "price_walking"
+      ]
+    },
+    {
+      "id": "MI-003",
+      "date": "2025-09-02",
+      "source": "FCA Publication",
+      "type": "regulatory",
+      "title": "FCA follow-up review of general insurance pricing practices",
+      "content": "The FCA published a follow-up review on the General Insurance Pricing Practices rules (in force since Jan 2022), reminding firms that renewal prices must not exceed the equivalent new business price for the same risk, and flagging continued monitoring of outlier firms.",
+      "sentiment": "neutral",
+      "relevance_tags": [
+        "regulation",
+        "renewal_pricing",
+        "compliance"
+      ]
+    },
+    {
+      "id": "MI-004",
+      "date": "2025-09-15",
+      "source": "Insurance Times",
+      "type": "news",
+      "title": "Admiral cuts prices in bid for market share",
+      "content": "Admiral has reduced premiums for younger drivers by an average of 6% following stronger-than-expected claims experience, positioning itself as more competitive on price comparison websites for the 17-25 age segment.",
+      "sentiment": "negative",
+      "relevance_tags": [
+        "competitor_pricing",
+        "young_driver",
+        "market_share"
+      ]
+    },
+    {
+      "id": "MI-005",
+      "date": "2025-10-01",
+      "source": "Thatcham Research",
+      "type": "analyst_report",
+      "title": "EV repair costs continue to outpace ICE vehicles",
+      "content": "Battery electric vehicles are taking on average 14% longer to repair than equivalent combustion vehicles, with battery replacement costs a major driver of total loss decisions, pushing up severity for comprehensive claims.",
+      "sentiment": "negative",
+      "relevance_tags": [
+        "repair_costs",
+        "ev",
+        "claims_severity"
+      ]
+    },
+    {
+      "id": "MI-006",
+      "date": "2025-10-20",
+      "source": "Met Office / Industry Bulletin",
+      "type": "news",
+      "title": "Storm season triggers spike in weather-related claims",
+      "content": "A series of autumn storms across northern England and Scotland resulted in a sharp rise in comprehensive motor claims for flood and falling debris damage, with insurers bracing for elevated Q4 claims volumes.",
+      "sentiment": "negative",
+      "relevance_tags": [
+        "weather",
+        "claims_volume",
+        "regional"
+      ]
+    },
+    {
+      "id": "MI-007",
+      "date": "2025-11-05",
+      "source": "Trustpilot",
+      "type": "social_media",
+      "title": "Positive review of claims handling",
+      "content": "Had a claim after a minor collision, Aviva arranged a courtesy car within a day and the repair was sorted within a week. Really impressed with the service given how stressful the situation was.",
+      "sentiment": "positive",
+      "relevance_tags": [
+        "claims_service",
+        "customer_sentiment"
+      ]
+    },
+    {
+      "id": "MI-008",
+      "date": "2025-11-18",
+      "source": "Insurance Times",
+      "type": "news",
+      "title": "Direct Line Group reports improved combined ratio",
+      "content": "Direct Line Group's latest trading update showed a combined operating ratio improvement to 96%, attributed to rate increases pushed through in 2024-25 now earning through, alongside easing claims inflation.",
+      "sentiment": "neutral",
+      "relevance_tags": [
+        "competitor_pricing",
+        "market_trend",
+        "loss_ratio"
+      ]
+    },
+    {
+      "id": "MI-009",
+      "date": "2025-12-03",
+      "source": "LinkedIn - Industry Analyst",
+      "type": "social_media",
+      "title": "Commentary on telematics adoption for young drivers",
+      "content": "Increasing adoption of telematics ('black box') policies is helping some insurers offer more competitive pricing to under-25s while managing loss ratios, as usage data allows more granular risk segmentation than age and postcode alone.",
+      "sentiment": "positive",
+      "relevance_tags": [
+        "young_driver",
+        "telematics",
+        "underwriting"
+      ]
+    },
+    {
+      "id": "MI-010",
+      "date": "2025-12-14",
+      "source": "BBC News",
+      "type": "news",
+      "title": "Cost of living pressures affecting insurance affordability",
+      "content": "Consumer groups report a rise in the number of drivers admitting to reducing cover levels or missing payments as household budgets remain squeezed, raising concerns about underinsurance across the motor market.",
+      "sentiment": "negative",
+      "relevance_tags": [
+        "affordability",
+        "market_trend",
+        "customer_sentiment"
+      ]
+    },
+    {
+      "id": "MI-011",
+      "date": "2026-01-10",
+      "source": "Trustpilot",
+      "type": "social_media",
+      "title": "Complaint about lengthy claims settlement",
+      "content": "Three months and still waiting for my claim to be settled after a rear-end shunt. Constant back and forth between engineers. Considering switching insurer at renewal.",
+      "sentiment": "negative",
+      "relevance_tags": [
+        "claims_service",
+        "customer_sentiment",
+        "retention_risk"
+      ]
+    },
+    {
+      "id": "MI-012",
+      "date": "2026-01-22",
+      "source": "Insurance Times",
+      "type": "news",
+      "title": "Hastings Direct undercuts market on comprehensive cover",
+      "content": "Hastings Direct has been consistently appearing in the top three cheapest quotes on major price comparison websites for standard risk profiles, a strategy analysts link to increased use of pricing automation and lower acquisition cost ambitions.",
+      "sentiment": "negative",
+      "relevance_tags": [
+        "competitor_pricing",
+        "market_share",
+        "pcw"
+      ]
+    },
+    {
+      "id": "MI-013",
+      "date": "2026-02-08",
+      "source": "ABI",
+      "type": "industry_report",
+      "title": "Whiplash reforms reducing small bodily injury claims",
+      "content": "Continued benefits from the 2021 whiplash reforms are visible in the latest ABI claims data, with small personal injury claim volumes down modestly, partially offsetting rising vehicle repair cost inflation.",
+      "sentiment": "positive",
+      "relevance_tags": [
+        "claims_trend",
+        "regulation",
+        "loss_ratio"
+      ]
+    },
+    {
+      "id": "MI-014",
+      "date": "2026-03-01",
+      "source": "X (Twitter)",
+      "type": "social_media",
+      "title": "Viral post comparing renewal vs new customer pricing",
+      "content": "Screenshot doing the rounds showing a loyal customer's renewal price nearly double what a new customer would pay for identical cover on the same insurer, reigniting 'loyalty penalty' criticism despite FCA rules.",
+      "sentiment": "negative",
+      "relevance_tags": [
+        "renewal_pricing",
+        "price_walking",
+        "reputation_risk"
+      ]
+    },
+    {
+      "id": "MI-015",
+      "date": "2026-03-19",
+      "source": "Insurance Times",
+      "type": "news",
+      "title": "LV= expands telematics-based young driver product",
+      "content": "LV= announced an expansion of its telematics proposition targeting the 17-25 segment, offering premium discounts of up to 20% for demonstrated safe driving, intensifying competition in a segment already under pricing pressure.",
+      "sentiment": "negative",
+      "relevance_tags": [
+        "young_driver",
+        "competitor_pricing",
+        "telematics"
+      ]
+    },
+    {
+      "id": "MI-016",
+      "date": "2026-04-14",
+      "source": "Which?",
+      "type": "news",
+      "title": "Consumer group names and shames insurers on renewal hikes",
+      "content": "Which? published a comparison highlighting motor insurers with the largest average renewal price increases over the past year, urging customers to shop around; several major insurers, including Aviva, were named in the mid-table.",
+      "sentiment": "negative",
+      "relevance_tags": [
+        "renewal_pricing",
+        "reputation_risk",
+        "customer_sentiment"
+      ]
+    },
+    {
+      "id": "MI-017",
+      "date": "2026-05-06",
+      "source": "Thatcham Research",
+      "type": "analyst_report",
+      "title": "Parts price inflation shows signs of easing",
+      "content": "After two years of steep increases, average vehicle parts prices rose just 1.2% in the latest quarter, the smallest increase since 2021, suggesting claims severity inflation for motor may begin to moderate over the coming year.",
+      "sentiment": "positive",
+      "relevance_tags": [
+        "repair_costs",
+        "claims_severity",
+        "market_trend"
+      ]
+    },
+    {
+      "id": "MI-018",
+      "date": "2026-06-11",
+      "source": "Trustpilot",
+      "type": "social_media",
+      "title": "Praise for transparent pricing explanation",
+      "content": "Called up confused about why my premium went up and the advisor actually explained the rating factors clearly - claims in my area and my car's repair group. Appreciated the transparency even though I wasn't thrilled about the price.",
+      "sentiment": "positive",
+      "relevance_tags": [
+        "customer_sentiment",
+        "renewal_pricing",
+        "transparency"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,416 @@
+{
+  "dataset": "competitor_information",
+  "description": "Synthetic quarterly competitor premium benchmarking across representative UK motor insurance rating profiles. Competitor names are illustrative; all prices are synthetic.",
+  "currency": "GBP",
+  "generated_for": "Aviva Pricing Analyst Copilot challenge - synthetic data only",
+  "records": [
+    {
+      "quarter": "2025-Q3",
+      "profile_id": "RP-01",
+      "profile_description": "21yo male, Ford Fiesta 1.0, London, 1yr NCB, Comprehensive",
+      "premiums_gbp": {
+        "Aviva": 1819,
+        "Admiral": 1726,
+        "Direct Line": 1860,
+        "LV=": 1775,
+        "Churchill": 1837,
+        "Hastings Direct": 1591,
+        "esure": 1730
+      },
+      "aviva_market_rank": 5,
+      "cheapest_competitor": "Hastings Direct",
+      "aviva_vs_market_median_pct": 2.5
+    },
+    {
+      "quarter": "2025-Q4",
+      "profile_id": "RP-01",
+      "profile_description": "21yo male, Ford Fiesta 1.0, London, 1yr NCB, Comprehensive",
+      "premiums_gbp": {
+        "Aviva": 1837,
+        "Admiral": 1766,
+        "Direct Line": 1826,
+        "LV=": 1775,
+        "Churchill": 1814,
+        "Hastings Direct": 1639,
+        "esure": 1726
+      },
+      "aviva_market_rank": 7,
+      "cheapest_competitor": "Hastings Direct",
+      "aviva_vs_market_median_pct": 3.5
+    },
+    {
+      "quarter": "2026-Q1",
+      "profile_id": "RP-01",
+      "profile_description": "21yo male, Ford Fiesta 1.0, London, 1yr NCB, Comprehensive",
+      "premiums_gbp": {
+        "Aviva": 1894,
+        "Admiral": 1750,
+        "Direct Line": 1868,
+        "LV=": 1825,
+        "Churchill": 1814,
+        "Hastings Direct": 1651,
+        "esure": 1717
+      },
+      "aviva_market_rank": 7,
+      "cheapest_competitor": "Hastings Direct",
+      "aviva_vs_market_median_pct": 4.4
+    },
+    {
+      "quarter": "2026-Q2",
+      "profile_id": "RP-01",
+      "profile_description": "21yo male, Ford Fiesta 1.0, London, 1yr NCB, Comprehensive",
+      "premiums_gbp": {
+        "Aviva": 1926,
+        "Admiral": 1803,
+        "Direct Line": 1928,
+        "LV=": 1886,
+        "Churchill": 1807,
+        "Hastings Direct": 1697,
+        "esure": 1759
+      },
+      "aviva_market_rank": 6,
+      "cheapest_competitor": "Hastings Direct",
+      "aviva_vs_market_median_pct": 6.6
+    },
+    {
+      "quarter": "2025-Q3",
+      "profile_id": "RP-02",
+      "profile_description": "35yo female, VW Golf 1.6, Manchester, 5yr NCB, Comprehensive",
+      "premiums_gbp": {
+        "Aviva": 619,
+        "Admiral": 581,
+        "Direct Line": 654,
+        "LV=": 600,
+        "Churchill": 666,
+        "Hastings Direct": 585,
+        "esure": 599
+      },
+      "aviva_market_rank": 5,
+      "cheapest_competitor": "Admiral",
+      "aviva_vs_market_median_pct": 3.2
+    },
+    {
+      "quarter": "2025-Q4",
+      "profile_id": "RP-02",
+      "profile_description": "35yo female, VW Golf 1.6, Manchester, 5yr NCB, Comprehensive",
+      "premiums_gbp": {
+        "Aviva": 635,
+        "Admiral": 587,
+        "Direct Line": 644,
+        "LV=": 601,
+        "Churchill": 662,
+        "Hastings Direct": 577,
+        "esure": 599
+      },
+      "aviva_market_rank": 5,
+      "cheapest_competitor": "Hastings Direct",
+      "aviva_vs_market_median_pct": 5.7
+    },
+    {
+      "quarter": "2026-Q1",
+      "profile_id": "RP-02",
+      "profile_description": "35yo female, VW Golf 1.6, Manchester, 5yr NCB, Comprehensive",
+      "premiums_gbp": {
+        "Aviva": 648,
+        "Admiral": 584,
+        "Direct Line": 645,
+        "LV=": 610,
+        "Churchill": 662,
+        "Hastings Direct": 587,
+        "esure": 603
+      },
+      "aviva_market_rank": 6,
+      "cheapest_competitor": "Admiral",
+      "aviva_vs_market_median_pct": 6.2
+    },
+    {
+      "quarter": "2026-Q2",
+      "profile_id": "RP-02",
+      "profile_description": "35yo female, VW Golf 1.6, Manchester, 5yr NCB, Comprehensive",
+      "premiums_gbp": {
+        "Aviva": 657,
+        "Admiral": 603,
+        "Direct Line": 644,
+        "LV=": 618,
+        "Churchill": 672,
+        "Hastings Direct": 596,
+        "esure": 606
+      },
+      "aviva_market_rank": 6,
+      "cheapest_competitor": "Hastings Direct",
+      "aviva_vs_market_median_pct": 6.3
+    },
+    {
+      "quarter": "2025-Q3",
+      "profile_id": "RP-03",
+      "profile_description": "45yo male, BMW 3 Series 2.0, Birmingham, 9yr NCB, Comprehensive",
+      "premiums_gbp": {
+        "Aviva": 550,
+        "Admiral": 528,
+        "Direct Line": 567,
+        "LV=": 535,
+        "Churchill": 579,
+        "Hastings Direct": 523,
+        "esure": 521
+      },
+      "aviva_market_rank": 5,
+      "cheapest_competitor": "esure",
+      "aviva_vs_market_median_pct": 2.8
+    },
+    {
+      "quarter": "2025-Q4",
+      "profile_id": "RP-03",
+      "profile_description": "45yo male, BMW 3 Series 2.0, Birmingham, 9yr NCB, Comprehensive",
+      "premiums_gbp": {
+        "Aviva": 546,
+        "Admiral": 533,
+        "Direct Line": 568,
+        "LV=": 535,
+        "Churchill": 598,
+        "Hastings Direct": 533,
+        "esure": 526
+      },
+      "aviva_market_rank": 5,
+      "cheapest_competitor": "esure",
+      "aviva_vs_market_median_pct": 2.1
+    },
+    {
+      "quarter": "2026-Q1",
+      "profile_id": "RP-03",
+      "profile_description": "45yo male, BMW 3 Series 2.0, Birmingham, 9yr NCB, Comprehensive",
+      "premiums_gbp": {
+        "Aviva": 553,
+        "Admiral": 544,
+        "Direct Line": 584,
+        "LV=": 544,
+        "Churchill": 613,
+        "Hastings Direct": 540,
+        "esure": 543
+      },
+      "aviva_market_rank": 5,
+      "cheapest_competitor": "Hastings Direct",
+      "aviva_vs_market_median_pct": 1.7
+    },
+    {
+      "quarter": "2026-Q2",
+      "profile_id": "RP-03",
+      "profile_description": "45yo male, BMW 3 Series 2.0, Birmingham, 9yr NCB, Comprehensive",
+      "premiums_gbp": {
+        "Aviva": 550,
+        "Admiral": 554,
+        "Direct Line": 579,
+        "LV=": 546,
+        "Churchill": 609,
+        "Hastings Direct": 540,
+        "esure": 561
+      },
+      "aviva_market_rank": 3,
+      "cheapest_competitor": "Hastings Direct",
+      "aviva_vs_market_median_pct": -0.7
+    },
+    {
+      "quarter": "2025-Q3",
+      "profile_id": "RP-04",
+      "profile_description": "60yo female, Toyota Yaris 1.3, Cardiff, 9yr NCB, Comprehensive",
+      "premiums_gbp": {
+        "Aviva": 402,
+        "Admiral": 407,
+        "Direct Line": 437,
+        "LV=": 398,
+        "Churchill": 438,
+        "Hastings Direct": 393,
+        "esure": 411
+      },
+      "aviva_market_rank": 3,
+      "cheapest_competitor": "Hastings Direct",
+      "aviva_vs_market_median_pct": -1.2
+    },
+    {
+      "quarter": "2025-Q4",
+      "profile_id": "RP-04",
+      "profile_description": "60yo female, Toyota Yaris 1.3, Cardiff, 9yr NCB, Comprehensive",
+      "premiums_gbp": {
+        "Aviva": 404,
+        "Admiral": 401,
+        "Direct Line": 433,
+        "LV=": 404,
+        "Churchill": 453,
+        "Hastings Direct": 386,
+        "esure": 410
+      },
+      "aviva_market_rank": 3,
+      "cheapest_competitor": "Hastings Direct",
+      "aviva_vs_market_median_pct": 0.0
+    },
+    {
+      "quarter": "2026-Q1",
+      "profile_id": "RP-04",
+      "profile_description": "60yo female, Toyota Yaris 1.3, Cardiff, 9yr NCB, Comprehensive",
+      "premiums_gbp": {
+        "Aviva": 410,
+        "Admiral": 410,
+        "Direct Line": 429,
+        "LV=": 414,
+        "Churchill": 458,
+        "Hastings Direct": 391,
+        "esure": 420
+      },
+      "aviva_market_rank": 2,
+      "cheapest_competitor": "Hastings Direct",
+      "aviva_vs_market_median_pct": -1.0
+    },
+    {
+      "quarter": "2026-Q2",
+      "profile_id": "RP-04",
+      "profile_description": "60yo female, Toyota Yaris 1.3, Cardiff, 9yr NCB, Comprehensive",
+      "premiums_gbp": {
+        "Aviva": 399,
+        "Admiral": 419,
+        "Direct Line": 439,
+        "LV=": 419,
+        "Churchill": 456,
+        "Hastings Direct": 404,
+        "esure": 434
+      },
+      "aviva_market_rank": 1,
+      "cheapest_competitor": "Aviva",
+      "aviva_vs_market_median_pct": -4.8
+    },
+    {
+      "quarter": "2025-Q3",
+      "profile_id": "RP-05",
+      "profile_description": "28yo male, Audi A3 1.4, Glasgow, 3yr NCB, Comprehensive",
+      "premiums_gbp": {
+        "Aviva": 990,
+        "Admiral": 957,
+        "Direct Line": 996,
+        "LV=": 987,
+        "Churchill": 1027,
+        "Hastings Direct": 890,
+        "esure": 967
+      },
+      "aviva_market_rank": 5,
+      "cheapest_competitor": "Hastings Direct",
+      "aviva_vs_market_median_pct": 0.3
+    },
+    {
+      "quarter": "2025-Q4",
+      "profile_id": "RP-05",
+      "profile_description": "28yo male, Audi A3 1.4, Glasgow, 3yr NCB, Comprehensive",
+      "premiums_gbp": {
+        "Aviva": 1002,
+        "Admiral": 939,
+        "Direct Line": 991,
+        "LV=": 974,
+        "Churchill": 1030,
+        "Hastings Direct": 878,
+        "esure": 951
+      },
+      "aviva_market_rank": 6,
+      "cheapest_competitor": "Hastings Direct",
+      "aviva_vs_market_median_pct": 2.9
+    },
+    {
+      "quarter": "2026-Q1",
+      "profile_id": "RP-05",
+      "profile_description": "28yo male, Audi A3 1.4, Glasgow, 3yr NCB, Comprehensive",
+      "premiums_gbp": {
+        "Aviva": 1007,
+        "Admiral": 939,
+        "Direct Line": 1004,
+        "LV=": 979,
+        "Churchill": 1022,
+        "Hastings Direct": 890,
+        "esure": 970
+      },
+      "aviva_market_rank": 6,
+      "cheapest_competitor": "Hastings Direct",
+      "aviva_vs_market_median_pct": 2.9
+    },
+    {
+      "quarter": "2026-Q2",
+      "profile_id": "RP-05",
+      "profile_description": "28yo male, Audi A3 1.4, Glasgow, 3yr NCB, Comprehensive",
+      "premiums_gbp": {
+        "Aviva": 1037,
+        "Admiral": 954,
+        "Direct Line": 1001,
+        "LV=": 994,
+        "Churchill": 1003,
+        "Hastings Direct": 921,
+        "esure": 996
+      },
+      "aviva_market_rank": 7,
+      "cheapest_competitor": "Hastings Direct",
+      "aviva_vs_market_median_pct": 4.1
+    },
+    {
+      "quarter": "2025-Q3",
+      "profile_id": "RP-06",
+      "profile_description": "50yo male, Nissan Qashqai 1.5, Leeds, 9yr NCB, Comprehensive",
+      "premiums_gbp": {
+        "Aviva": 507,
+        "Admiral": 478,
+        "Direct Line": 530,
+        "LV=": 497,
+        "Churchill": 551,
+        "Hastings Direct": 464,
+        "esure": 484
+      },
+      "aviva_market_rank": 5,
+      "cheapest_competitor": "Hastings Direct",
+      "aviva_vs_market_median_pct": 2.0
+    },
+    {
+      "quarter": "2025-Q4",
+      "profile_id": "RP-06",
+      "profile_description": "50yo male, Nissan Qashqai 1.5, Leeds, 9yr NCB, Comprehensive",
+      "premiums_gbp": {
+        "Aviva": 500,
+        "Admiral": 485,
+        "Direct Line": 536,
+        "LV=": 507,
+        "Churchill": 552,
+        "Hastings Direct": 470,
+        "esure": 482
+      },
+      "aviva_market_rank": 4,
+      "cheapest_competitor": "Hastings Direct",
+      "aviva_vs_market_median_pct": 0.0
+    },
+    {
+      "quarter": "2026-Q1",
+      "profile_id": "RP-06",
+      "profile_description": "50yo male, Nissan Qashqai 1.5, Leeds, 9yr NCB, Comprehensive",
+      "premiums_gbp": {
+        "Aviva": 504,
+        "Admiral": 487,
+        "Direct Line": 549,
+        "LV=": 500,
+        "Churchill": 561,
+        "Hastings Direct": 483,
+        "esure": 487
+      },
+      "aviva_market_rank": 5,
+      "cheapest_competitor": "Hastings Direct",
+      "aviva_vs_market_median_pct": 0.8
+    },
+    {
+      "quarter": "2026-Q2",
+      "profile_id": "RP-06",
+      "profile_description": "50yo male, Nissan Qashqai 1.5, Leeds, 9yr NCB, Comprehensive",
+      "premiums_gbp": {
+        "Aviva": 518,
+        "Admiral": 489,
+        "Direct Line": 565,
+        "LV=": 501,
+        "Churchill": 575,
+        "Hastings Direct": 484,
+        "esure": 497
+      },
+      "aviva_market_rank": 5,
+      "cheapest_competitor": "Hastings Direct",
+      "aviva_vs_market_median_pct": 3.4
+    }
+  ]
+}

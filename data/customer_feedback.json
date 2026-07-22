@@ -1,0 +1,252 @@
+{
+  "dataset": "customer_feedback",
+  "description": "Synthetic monthly customer satisfaction metrics and verbatim feedback for Private Car Motor Insurance customers.",
+  "generated_for": "Aviva Pricing Analyst Copilot challenge - synthetic data only",
+  "monthly_metrics": [
+    {
+      "period": "2025-07",
+      "nps_score": 21.3,
+      "csat_pct": 77.4,
+      "complaints_count": {
+        "pricing_renewal": 39,
+        "claims_handling": 58,
+        "general_service": 26
+      },
+      "survey_responses_count": 1275
+    },
+    {
+      "period": "2025-08",
+      "nps_score": 23.3,
+      "csat_pct": 76.4,
+      "complaints_count": {
+        "pricing_renewal": 38,
+        "claims_handling": 49,
+        "general_service": 30
+      },
+      "survey_responses_count": 1124
+    },
+    {
+      "period": "2025-09",
+      "nps_score": 22.2,
+      "csat_pct": 77.0,
+      "complaints_count": {
+        "pricing_renewal": 41,
+        "claims_handling": 48,
+        "general_service": 33
+      },
+      "survey_responses_count": 1243
+    },
+    {
+      "period": "2025-10",
+      "nps_score": 21.0,
+      "csat_pct": 77.6,
+      "complaints_count": {
+        "pricing_renewal": 48,
+        "claims_handling": 58,
+        "general_service": 34
+      },
+      "survey_responses_count": 1292
+    },
+    {
+      "period": "2025-11",
+      "nps_score": 20.1,
+      "csat_pct": 78.0,
+      "complaints_count": {
+        "pricing_renewal": 44,
+        "claims_handling": 56,
+        "general_service": 33
+      },
+      "survey_responses_count": 1179
+    },
+    {
+      "period": "2025-12",
+      "nps_score": 19.4,
+      "csat_pct": 76.7,
+      "complaints_count": {
+        "pricing_renewal": 49,
+        "claims_handling": 51,
+        "general_service": 34
+      },
+      "survey_responses_count": 1223
+    },
+    {
+      "period": "2026-01",
+      "nps_score": 18.5,
+      "csat_pct": 75.0,
+      "complaints_count": {
+        "pricing_renewal": 56,
+        "claims_handling": 58,
+        "general_service": 25
+      },
+      "survey_responses_count": 1295
+    },
+    {
+      "period": "2026-02",
+      "nps_score": 18.3,
+      "csat_pct": 75.1,
+      "complaints_count": {
+        "pricing_renewal": 56,
+        "claims_handling": 47,
+        "general_service": 33
+      },
+      "survey_responses_count": 1268
+    },
+    {
+      "period": "2026-03",
+      "nps_score": 20.1,
+      "csat_pct": 74.9,
+      "complaints_count": {
+        "pricing_renewal": 55,
+        "claims_handling": 55,
+        "general_service": 35
+      },
+      "survey_responses_count": 1295
+    },
+    {
+      "period": "2026-04",
+      "nps_score": 17.6,
+      "csat_pct": 74.8,
+      "complaints_count": {
+        "pricing_renewal": 55,
+        "claims_handling": 52,
+        "general_service": 26
+      },
+      "survey_responses_count": 1244
+    },
+    {
+      "period": "2026-05",
+      "nps_score": 18.6,
+      "csat_pct": 73.7,
+      "complaints_count": {
+        "pricing_renewal": 67,
+        "claims_handling": 47,
+        "general_service": 25
+      },
+      "survey_responses_count": 1291
+    },
+    {
+      "period": "2026-06",
+      "nps_score": 17.7,
+      "csat_pct": 74.3,
+      "complaints_count": {
+        "pricing_renewal": 66,
+        "claims_handling": 57,
+        "general_service": 26
+      },
+      "survey_responses_count": 1194
+    }
+  ],
+  "verbatim_comments": [
+    {
+      "comment_id": "CF-001",
+      "date": "2025-08-06",
+      "channel": "Renewal survey",
+      "rating_out_of_5": 2,
+      "tags": [
+        "pricing",
+        "renewal"
+      ],
+      "comment": "My premium went up nearly 30% with no claims and no changes to my car or address. I only stayed because I didn't have time to shop around."
+    },
+    {
+      "comment_id": "CF-002",
+      "date": "2025-09-12",
+      "channel": "Claims survey",
+      "rating_out_of_5": 5,
+      "tags": [
+        "claims",
+        "service"
+      ],
+      "comment": "Excellent experience after my accident. Courtesy car arranged same day and repair completed within a week. Would recommend."
+    },
+    {
+      "comment_id": "CF-003",
+      "date": "2025-10-30",
+      "channel": "App store review",
+      "rating_out_of_5": 3,
+      "tags": [
+        "pricing",
+        "digital"
+      ],
+      "comment": "App is fine but the quote I got through the app was more expensive than going through a comparison site for the same cover. Confusing."
+    },
+    {
+      "comment_id": "CF-004",
+      "date": "2025-12-02",
+      "channel": "Trustpilot",
+      "rating_out_of_5": 1,
+      "tags": [
+        "claims",
+        "delay"
+      ],
+      "comment": "Nearly 3 months to settle a straightforward claim. Constant chasing needed. Considering switching at renewal."
+    },
+    {
+      "comment_id": "CF-005",
+      "date": "2026-01-18",
+      "channel": "Renewal survey",
+      "rating_out_of_5": 2,
+      "tags": [
+        "pricing",
+        "young_driver"
+      ],
+      "comment": "As a 22 year old the price just keeps climbing every year even with a clean licence. Looking at telematics options with other insurers now."
+    },
+    {
+      "comment_id": "CF-006",
+      "date": "2026-02-25",
+      "channel": "Call centre survey",
+      "rating_out_of_5": 4,
+      "tags": [
+        "pricing",
+        "transparency"
+      ],
+      "comment": "Was annoyed about the price increase but the advisor explained the reasons (claims in my postcode) clearly, which I appreciated."
+    },
+    {
+      "comment_id": "CF-007",
+      "date": "2026-03-30",
+      "channel": "Trustpilot",
+      "rating_out_of_5": 5,
+      "tags": [
+        "telematics",
+        "young_driver",
+        "pricing"
+      ],
+      "comment": "Switched to the black box product and my premium actually dropped after 6 months of safe driving scores. Great value now."
+    },
+    {
+      "comment_id": "CF-008",
+      "date": "2026-05-14",
+      "channel": "Renewal survey",
+      "rating_out_of_5": 2,
+      "tags": [
+        "pricing",
+        "loyalty"
+      ],
+      "comment": "Checked a comparison site out of curiosity and could get the same cover elsewhere for 200 pounds less. Feels like loyal customers pay more."
+    },
+    {
+      "comment_id": "CF-009",
+      "date": "2026-06-08",
+      "channel": "Claims survey",
+      "rating_out_of_5": 4,
+      "tags": [
+        "claims",
+        "service"
+      ],
+      "comment": "Good communication throughout my claim, only downside was a slight delay getting an engineer out to assess the damage."
+    },
+    {
+      "comment_id": "CF-010",
+      "date": "2026-06-25",
+      "channel": "App store review",
+      "rating_out_of_5": 1,
+      "tags": [
+        "pricing",
+        "renewal"
+      ],
+      "comment": "Renewal price was almost double what a new customer would pay according to a quote I got as a test. Very disappointing after years as a customer."
+    }
+  ]
+}

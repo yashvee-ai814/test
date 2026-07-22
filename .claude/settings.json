@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c ' *)",
+      "Bash(uv init *)",
+      "Bash(rm -rf /Users/shash/Desktop/test/.git && rm -f /Users/shash/Desktop/test/README.md /Users/shash/Desktop/test/main.py.bak 2>&1; ls -la /Users/shash/Desktop/test)",
+      "Bash(uv add *)",
+      "Bash(uv run *)",
+      "Bash(git init *)"
+    ],
+    "additionalDirectories": [
+      "/Users/shash/Desktop/test/.git"
+    ]
+  }
+}

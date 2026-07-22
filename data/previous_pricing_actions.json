@@ -1,0 +1,153 @@
+{
+  "dataset": "previous_pricing_actions",
+  "description": "Synthetic log of historical pricing and underwriting actions for Private Car Motor Insurance, including rationale and observed impact.",
+  "generated_for": "Aviva Pricing Analyst Copilot challenge - synthetic data only",
+  "records": [
+    {
+      "action_id": "PA-2024-01",
+      "date": "2024-09-01",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment_affected": "Young Driver (17-25)",
+      "action_type": "Rate increase",
+      "change_pct": 12.0,
+      "rationale": "Loss ratio for young driver segment reached 98%, driven by rising claim frequency and theft rates in urban areas.",
+      "approval_ref": "PRC-2024-0912",
+      "observed_impact_after_3_months": {
+        "conversion_rate_change_pct": -2.4,
+        "loss_ratio_change_pct": -6.5,
+        "pcw_rank_change": -0.8
+      }
+    },
+    {
+      "action_id": "PA-2024-02",
+      "date": "2024-11-15",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment_affected": "Standard (26-65)",
+      "action_type": "Underwriting criteria change",
+      "change_pct": null,
+      "rationale": "Tightened acceptance criteria for high-performance vehicle modifications following elevated theft claim severity.",
+      "approval_ref": "PRC-2024-1118",
+      "observed_impact_after_3_months": {
+        "conversion_rate_change_pct": -0.6,
+        "loss_ratio_change_pct": -3.1,
+        "pcw_rank_change": 0.1
+      }
+    },
+    {
+      "action_id": "PA-2025-01",
+      "date": "2025-02-01",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment_affected": "All segments",
+      "action_type": "Rate increase",
+      "change_pct": 5.5,
+      "rationale": "Broad-based increase to reflect industry-wide parts and labour cost inflation reported by Thatcham Research.",
+      "approval_ref": "PRC-2025-0128",
+      "observed_impact_after_3_months": {
+        "conversion_rate_change_pct": -1.8,
+        "loss_ratio_change_pct": -4.0,
+        "pcw_rank_change": -0.5
+      }
+    },
+    {
+      "action_id": "PA-2025-02",
+      "date": "2025-04-10",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment_affected": "Senior (66+)",
+      "action_type": "Discount campaign",
+      "change_pct": -4.0,
+      "rationale": "Targeted discount to improve competitiveness after conversion analysis showed senior segment consistently ranking outside top 5 on PCWs.",
+      "approval_ref": "PRC-2025-0405",
+      "observed_impact_after_3_months": {
+        "conversion_rate_change_pct": 3.1,
+        "loss_ratio_change_pct": 2.0,
+        "pcw_rank_change": 1.4
+      }
+    },
+    {
+      "action_id": "PA-2025-03",
+      "date": "2025-06-20",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment_affected": "Young Driver (17-25)",
+      "action_type": "New product launch",
+      "change_pct": null,
+      "rationale": "Launched telematics-based product for under-25s to compete with LV= and other telematics offerings, allowing risk-based pricing below standard young driver rates for safe drivers.",
+      "approval_ref": "PRC-2025-0611",
+      "observed_impact_after_3_months": {
+        "conversion_rate_change_pct": 1.9,
+        "loss_ratio_change_pct": -1.2,
+        "pcw_rank_change": 0.6
+      }
+    },
+    {
+      "action_id": "PA-2025-04",
+      "date": "2025-09-05",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment_affected": "Young Driver (17-25)",
+      "action_type": "Rate increase",
+      "change_pct": 8.0,
+      "rationale": "Further correction to young driver rates following continued deterioration in claim frequency reported in Q2/Q3 claims data.",
+      "approval_ref": "PRC-2025-0902",
+      "observed_impact_after_3_months": {
+        "conversion_rate_change_pct": -3.5,
+        "loss_ratio_change_pct": -5.8,
+        "pcw_rank_change": -0.9
+      }
+    },
+    {
+      "action_id": "PA-2025-05",
+      "date": "2025-11-01",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment_affected": "Experienced (46-65)",
+      "action_type": "Rate decrease",
+      "change_pct": -2.5,
+      "rationale": "Loss ratio for this segment remained consistently below target (75%) for three consecutive quarters; reduced rates to improve volume and PCW ranking.",
+      "approval_ref": "PRC-2025-1029",
+      "observed_impact_after_3_months": {
+        "conversion_rate_change_pct": 2.2,
+        "loss_ratio_change_pct": 3.5,
+        "pcw_rank_change": 0.7
+      }
+    },
+    {
+      "action_id": "PA-2026-01",
+      "date": "2026-01-15",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment_affected": "All segments",
+      "action_type": "Rate increase",
+      "change_pct": 4.0,
+      "rationale": "Annual technical price update reflecting updated claims inflation assumptions and reinsurance cost pass-through.",
+      "approval_ref": "PRC-2026-0112",
+      "observed_impact_after_3_months": {
+        "conversion_rate_change_pct": -1.1,
+        "loss_ratio_change_pct": -2.8,
+        "pcw_rank_change": -0.3
+      }
+    },
+    {
+      "action_id": "PA-2026-02",
+      "date": "2026-03-10",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment_affected": "Standard (26-65)",
+      "action_type": "Discount campaign",
+      "change_pct": -3.0,
+      "rationale": "Short-term promotional discount for direct channel to boost new business volumes during Q1 renewal season ahead of Which? consumer report.",
+      "approval_ref": "PRC-2026-0304",
+      "observed_impact_after_3_months": {
+        "conversion_rate_change_pct": 1.6,
+        "loss_ratio_change_pct": 1.9,
+        "pcw_rank_change": 0.4
+      }
+    },
+    {
+      "action_id": "PA-2026-03",
+      "date": "2026-05-20",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment_affected": "Young Driver (17-25)",
+      "action_type": "Underwriting criteria change",
+      "change_pct": null,
+      "rationale": "Expanded telematics product eligibility to 17-25 segment nationally after positive pilot results, in response to competitor moves from LV= and Admiral.",
+      "approval_ref": "PRC-2026-0518",
+      "observed_impact_after_3_months": null
+    }
+  ]
+}

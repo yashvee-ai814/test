@@ -1,0 +1,297 @@
+{
+  "dataset": "demo_scenarios",
+  "description": "Ten synthetic end-to-end scenarios for presenting the Aviva Pricing Analyst Copilot. Every number quoted in a scenario's key_findings was checked against the actual generated data files (not invented) - see verification_note on each scenario for exactly what was checked and any limits on what the data can support. Where the raw data is noisy or a claim can't be independently re-derived, the scenario says so explicitly rather than asserting false precision. Any MI-XXX item cited below (e.g. MI-004) also has a full-text raw source document at data/unstructured_market_intelligence/MI-XXX_*.md, in addition to its structured summary in unstructured_market_intelligence.json.",
+  "generated_for": "Aviva Pricing Analyst Copilot challenge - synthetic data only",
+  "persona": "Pricing Analyst, Private Car Motor Insurance",
+  "scenarios": [
+    {
+      "scenario_id": "SC-01",
+      "title": "Young Driver Loss Ratio Deterioration Deep-Dive",
+      "analyst_trigger_query": "Why is the loss ratio for our 17-25 young driver segment getting worse, and what should we do about it?",
+      "business_context": "Young driver comprehensive loss ratio has been drifting upward for 12 consecutive months.",
+      "data_sources_used": [
+        "claims_performance.json (segment: 'Young Driver (17-25)', fields: claim_frequency_pct, loss_ratio_pct, all 12 periods)",
+        "conversion_performance.json (channel: 'Price Comparison Website', segment: 'Young Driver (17-25)', field: average_pcw_rank)",
+        "competitor_information.json (profile_id: RP-01 - 21yo male, Ford Fiesta, London - field: aviva_market_rank)",
+        "previous_pricing_actions.json (PA-2024-01, PA-2025-04: prior rate increases on this segment and their logged observed_impact_after_3_months)",
+        "unstructured_market_intelligence.json (MI-004 Admiral price cut, MI-009 telematics commentary)"
+      ],
+      "expected_agent_workflow": [
+        "Retrieve 12-month claims trend for the segment",
+        "Cross-reference with PCW conversion rank trend for the same segment, and the competitor rating profile closest to it",
+        "Retrieve prior pricing actions already taken on this segment and their logged impact",
+        "Scan market intelligence for competitor moves affecting this segment",
+        "Summarise findings and highlight the trend",
+        "Recommend a pricing action with reasoning"
+      ],
+      "key_findings": [
+        "claim_frequency_pct for Young Driver (17-25) rose from 9.58% to 11.77% over the 12-month window; loss_ratio_pct rose from 85.6% to 96.3% (avg 90.7%), the worst and only clearly worsening trend of the four segments",
+        "Two rate increases were already logged for this exact segment (PA-2024-01: +12% in Sep-2024, PA-2025-04: +8% in Sep-2025), each with a positive logged loss_ratio_change_pct (-6.5 and -5.8 respectively) - but the raw claims trend kept climbing through and after both actions, meaning underlying claims inflation is outpacing the rate response",
+        "average_pcw_rank for this segment worsened from 3.5 to 4.6 over the same period, and competitor profile RP-01 (closest match: 21yo male, Ford Fiesta, London) shows Aviva's market rank sliding from 5th to 6th-7th of 7 insurers - a further blanket increase risks losing more volume than it recovers in loss ratio",
+        "Market intelligence corroborates the competitive pressure: Admiral cut young driver prices ~6% (MI-004) and LV= expanded telematics discounts (MI-009) in the same window"
+      ],
+      "recommended_action": "Do not apply a further blanket rate increase. Prioritise national rollout of the telematics-based product (already piloted per PA-2025-03, approved for national expansion per PA-2026-03) to re-risk-segment the book, rather than repeating a lever that has twice failed to arrest the trend.",
+      "reasoning": "Two consecutive rate increases each delivered their own logged short-term benefit but did not stop the underlying trend from reaching a new high - the claims and PCW-rank data together show the segment needs a different lever (risk segmentation via telematics), not a third repeat of the same one.",
+      "specialist_agents_involved": ["Claims Analysis Agent", "Conversion Analysis Agent", "Market Intelligence Agent", "Recommendation Agent"],
+      "risk_flags": ["Two prior rate actions on the same segment within 18 months may draw internal governance scrutiny", "Telematics rollout has execution/IT dependency not captured in this dataset"],
+      "verification_note": "All figures above were re-derived directly from the regenerated JSON files (not asserted from memory); PA-2024-01 predates claims_performance.json's history (which starts 2025-07), so its logged impact is taken from the pricing-actions record itself, not independently re-checked against raw claims data.",
+      "demo_narrative_tip": "Good opening scenario - shows the agent synthesising four data sources into one non-obvious recommendation (don't just raise price again)."
+    },
+    {
+      "scenario_id": "SC-02",
+      "title": "Price Comparison Website Ranking Slippage - Young Drivers",
+      "analyst_trigger_query": "Our young driver quote volumes on price comparison sites have been falling - what's driving it and is it a pricing issue?",
+      "business_context": "New business quote volume from PCWs for young drivers is down, raising concern about acquisition targets.",
+      "data_sources_used": [
+        "conversion_performance.json (channel: 'Price Comparison Website', segment: 'Young Driver (17-25)', fields: conversion_rate_pct, average_pcw_rank)",
+        "competitor_information.json (profile_id: RP-01, field: aviva_market_rank by quarter)",
+        "unstructured_market_intelligence.json (MI-004, MI-009, MI-015)"
+      ],
+      "expected_agent_workflow": [
+        "Retrieve conversion rate and PCW rank trend for the affected segment/channel",
+        "Compare Aviva's premium rank for the closest matching competitor rating profile (RP-01) over the same period",
+        "Identify which competitors have moved price and by how much",
+        "Summarise the ranking slippage as a competitive, not just an internal, issue",
+        "Recommend a response"
+      ],
+      "key_findings": [
+        "PCW conversion_rate_pct for Young Driver has fallen from 3.85% to 2.69% over the year",
+        "average_pcw_rank for the same segment has worsened from 3.5 to 4.6",
+        "For rating profile RP-01, Aviva's quarterly market rank moved 5th -> 7th -> 7th -> 6th of 7 insurers - it has been among the most expensive quotes on the panel for every quarter covered, not just the latest one",
+        "This coincides with two named competitor actions in the same window: Admiral's young-driver price cut (MI-004) and LV='s telematics expansion (MI-015)"
+      ],
+      "recommended_action": "Treat this as a competitive positioning issue rather than a pure underwriting one; commission a targeted price-elasticity test on the young driver segment for the PCW channel specifically, before committing to a further base-rate change.",
+      "reasoning": "The slippage is concentrated on one channel and one segment, is consistent across every quarter of competitor data available (not a single-quarter blip), and coincides with two named competitor actions - a segment-wide re-rate would be a blunter and slower response than a channel-specific elasticity test.",
+      "specialist_agents_involved": ["Conversion Analysis Agent", "Market Intelligence Agent", "Recommendation Agent"],
+      "risk_flags": ["Competitor pricing snapshots are quarterly and may lag real-time PCW panel changes"],
+      "verification_note": "Rank sequence (5,7,7,6) and conversion/PCW-rank figures were pulled directly from the regenerated competitor_information.json and conversion_performance.json files.",
+      "demo_narrative_tip": "Use this to demonstrate the agent distinguishing an internal problem from an external, competitor-driven one, backed by a full quarter-by-quarter rank history rather than a single snapshot."
+    },
+    {
+      "scenario_id": "SC-03",
+      "title": "Experienced Driver Segment Growth Opportunity",
+      "analyst_trigger_query": "Are there any segments where we're overpriced relative to risk and could grow further?",
+      "business_context": "Quarterly book review looking for underwriting profit pools that aren't being converted into policy growth.",
+      "data_sources_used": [
+        "claims_performance.json (all 4 segments, field: loss_ratio_pct, comparing averages)",
+        "conversion_performance.json (channel: 'Price Comparison Website', all 4 segments, field: average_pcw_rank)",
+        "previous_pricing_actions.json (PA-2025-05: Experienced (46-65) rate decrease and its logged observed impact)"
+      ],
+      "expected_agent_workflow": [
+        "Compare average loss_ratio_pct across all four segments to find the most consistently profitable one",
+        "Cross-check PCW rank performance for that segment against the others",
+        "Retrieve any prior pricing action already tested on the segment and its logged result",
+        "Recommend whether to extend, hold, or reverse the action"
+      ],
+      "key_findings": [
+        "Experienced (46-65) has the lowest average loss_ratio_pct of all four segments (57.7% avg, range 56.2-59.2%) versus Standard (68.8% avg), Senior (63.2% avg) and Young Driver (90.7% avg)",
+        "It also has the best average_pcw_rank on the PCW channel of any segment (1.7-1.9, i.e. typically the 1st or 2nd cheapest on the panel) - it is already both the most profitable and the most competitively priced segment",
+        "A -2.5% rate decrease was already applied to this exact segment in Nov-2025 (PA-2025-05), logging a +2.2% conversion improvement and +0.7 PCW rank improvement, with loss ratio moving by only +3.5pp from a very low base",
+        "Loss ratio in the months following the decrease has stayed within the same 56-59% range seen across the rest of the year, i.e. no sign of the segment becoming unprofitable"
+      ],
+      "recommended_action": "Consider a further, incremental rate decrease (e.g. 1.5-2%) for the Experienced segment as a natural next step after PA-2025-05, given loss ratio remains well below target even after the first decrease and PCW rank is already best-in-book.",
+      "reasoning": "This segment already combines the lowest loss ratio and best PCW rank in the book, and a similar decrease was already tested with a logged positive result and no visible deterioration in the raw claims trend since - extending the same logic is a low-risk next test rather than a fresh hypothesis.",
+      "specialist_agents_involved": ["Claims Analysis Agent", "Conversion Analysis Agent", "Recommendation Agent"],
+      "risk_flags": ["The raw monthly claims/conversion series is noisy month-to-month (±1.5pp loss ratio, ±0.4pp conversion) and does not on its own cleanly isolate the precise +3.5pp/+2.2% figures logged for PA-2025-05 - those recorded figures should be treated as the authoritative KPI snapshot, with the raw series used only to confirm no adverse trend followed"],
+      "verification_note": "Segment loss-ratio and PCW-rank averages were computed directly from claims_performance.json and conversion_performance.json across all 12 months; this replaces an earlier draft of this scenario that incorrectly named the Senior segment as most profitable.",
+      "demo_narrative_tip": "Good scenario to show the agent recommending building on a past success rather than only reacting to problems - and to show it being explicit about what the raw data can and can't confirm."
+    },
+    {
+      "scenario_id": "SC-04",
+      "title": "Renewal Pricing Fairness & Regulatory Compliance Check",
+      "analyst_trigger_query": "Are we at risk of another 'loyalty penalty' story like the one Which? just published, and are we still compliant with FCA pricing rules?",
+      "business_context": "A consumer-facing news story has named Aviva in a renewal pricing comparison, raising reputational and regulatory concerns.",
+      "data_sources_used": [
+        "unstructured_market_intelligence.json (MI-003 FCA review, MI-016 Which? article, MI-002 and MI-014 social posts)",
+        "customer_feedback.json (monthly_metrics: complaints_count.pricing_renewal trend; verbatim_comments: CF-001, CF-005, CF-008, CF-010)"
+      ],
+      "expected_agent_workflow": [
+        "Retrieve regulatory context on renewal pricing rules",
+        "Retrieve recent negative press/social coverage on the topic",
+        "Cross-reference with actual complaint volumes and verbatim customer feedback tagged 'pricing'/'renewal'",
+        "Assess whether complaint trend supports or contradicts the media narrative",
+        "Recommend next steps and flag for compliance/legal review where appropriate"
+      ],
+      "key_findings": [
+        "complaints_count.pricing_renewal rose from 39/month to 66/month over the 12-month window - by far the fastest-growing complaint category (claims_handling and general_service were both flat over the same period)",
+        "Multiple verbatim comments (CF-001, CF-008, CF-010) independently describe large renewal increases versus new-business or competitor quotes, corroborating the Which? story with internal evidence rather than it being an isolated media narrative",
+        "FCA rules (MI-003) require renewal price parity with equivalent new business risk - the complaint pattern warrants a targeted parity check, not just a PR response"
+      ],
+      "recommended_action": "Commission an urgent renewal-vs-new-business price parity audit for the flagged segments before issuing any public response, and route findings to Compliance in parallel with the pricing review.",
+      "reasoning": "The complaint and verbatim data corroborate the external story with independent internal evidence, which changes this from a reputational question to a potential compliance question - it should be escalated, not just monitored.",
+      "specialist_agents_involved": ["Market Intelligence Agent", "Recommendation Agent"],
+      "risk_flags": ["This scenario should always surface a human-in-the-loop / compliance escalation flag rather than a fully automated pricing action"],
+      "verification_note": "Complaint counts (39->66) and category comparison were computed directly from customer_feedback.json's monthly_metrics array.",
+      "demo_narrative_tip": "Strong scenario to show responsible AI behaviour - the agent recommends escalation rather than self-actioning a price change."
+    },
+    {
+      "scenario_id": "SC-05",
+      "title": "Regional Storm Claims Spike - Reserve & Rate Adequacy Review",
+      "analyst_trigger_query": "Claims volumes spiked in the North and Scotland last autumn - is our regional rating still adequate?",
+      "business_context": "Weather-related claims event flagged in market intelligence; need to check whether it shows up in the loss data and whether pricing already reflects it.",
+      "data_sources_used": [
+        "unstructured_market_intelligence.json (MI-006 storm bulletin)",
+        "claims_performance.json -> regional_weather_claims array (an independent region-level breakdown of weather-related claim counts, separate from the segment-level records)"
+      ],
+      "expected_agent_workflow": [
+        "Detect the weather event mention in market intelligence and extract the affected regions and period",
+        "Query the regional_weather_claims breakdown for those regions around the same period",
+        "Compare against unaffected regions in the same period",
+        "Determine whether the event is a one-off or part of a sustained regional trend",
+        "Recommend a rating response if warranted"
+      ],
+      "key_findings": [
+        "Market intelligence (MI-006, Oct-2025) flagged a storm-driven claims spike in Northern England and Scotland",
+        "regional_weather_claims confirms it: North of England went from a ~16/month baseline to 35 (Oct) and 49 (Nov); Scotland & NI went from a ~12/month baseline to 44 (Oct) and 27 (Nov)",
+        "Unaffected regions (Midlands, Wales & South West, London & South East) show no comparable movement in the same two months, confirming this is regional and not a book-wide trend",
+        "Only one autumn is covered in this dataset, so it cannot yet confirm whether this is a one-off event or a repeating seasonal pattern"
+      ],
+      "recommended_action": "Do not apply an immediate regional rate change on the basis of a single event; flag the two regions for enhanced monitoring through the next two storm seasons and request additional historical weather-claims data before any rating change.",
+      "reasoning": "One season of a clearly regional, clearly elevated spike (2-3x baseline in exactly the two regions the press flagged, with no movement elsewhere) is suggestive but not statistically sufficient across only one year of history to justify a rating change - the correct action is to flag for investigation and request more data.",
+      "specialist_agents_involved": ["Market Intelligence Agent", "Claims Analysis Agent", "Recommendation Agent"],
+      "risk_flags": ["Only 12 months of claims history is available in this synthetic dataset, limiting seasonal trend confidence"],
+      "verification_note": "This scenario originally pointed at the segment-level 'region' field, which is only a rotating label (one region tag per segment/period, not an independent axis) and could not actually support a region-vs-region comparison. Fixed by adding a genuine independent regional_weather_claims breakdown to claims_performance.json and verifying the spike appears only in the two flagged regions.",
+      "demo_narrative_tip": "Use this to show the agent correctly declining to over-react to a single data point - good for demonstrating judgement, not just correlation-spotting."
+    },
+    {
+      "scenario_id": "SC-06",
+      "title": "Competitor Telematics Threat Response",
+      "analyst_trigger_query": "LV= just expanded their telematics product for young drivers - do we need to respond, and how does that compare to what we're already doing?",
+      "business_context": "A specific competitor product move has been reported and the analyst wants to know if Aviva's existing roadmap already covers it.",
+      "data_sources_used": [
+        "unstructured_market_intelligence.json (MI-015 LV= telematics expansion)",
+        "previous_pricing_actions.json (PA-2025-03 telematics pilot launch, PA-2026-03 national expansion, and their logged/null impact)",
+        "conversion_performance.json (segment: Young Driver (17-25), PCW rank trend across the full window)"
+      ],
+      "expected_agent_workflow": [
+        "Retrieve the competitor news item and extract the specific claim (telematics, discount level, segment)",
+        "Cross-check internal pricing action history for an equivalent existing initiative",
+        "Assess whether the internal initiative is ahead of, behind, or roughly matched to the competitor move",
+        "Recommend whether acceleration, matching, or no action is needed"
+      ],
+      "key_findings": [
+        "Aviva already piloted a telematics product for under-25s in June 2025 (PA-2025-03, logged impact: +1.9% conversion, +0.6 PCW rank) and approved national expansion in May 2026 (PA-2026-03)",
+        "LV='s expansion (MI-015, March 2026) was announced before Aviva's national rollout was approved, meaning Aviva is currently a fast-follower rather than a leader on this specific move",
+        "PA-2026-03 has no observed_impact_after_3_months yet (null in the record), since it is too recent to measure",
+        "Despite the pilot's own positive logged effect, the segment's overall average_pcw_rank on the PCW channel still worsened across the full window (3.5 to 4.6) - the pilot's benefit is being outweighed by broader competitive and claims pressure on the segment as a whole, reinforcing that the national rollout needs to be prioritised rather than treated as already having solved the problem"
+      ],
+      "recommended_action": "Prioritise and expedite the already-approved national telematics rollout (PA-2026-03) rather than starting a new initiative, and schedule a 3-month impact review once sufficient post-launch data exists.",
+      "reasoning": "The competitive response Aviva needs already exists in the pipeline; the correct action is prioritisation and measurement, not creating a new duplicate work stream - though the still-worsening overall PCW rank shows the pilot alone hasn't been enough.",
+      "specialist_agents_involved": ["Market Intelligence Agent", "Conversion Analysis Agent", "Recommendation Agent"],
+      "risk_flags": ["Impact of PA-2026-03 is not yet measurable - agent should clearly state this is an open item rather than fabricate a result"],
+      "verification_note": "PCW rank trend (3.5->4.6) re-checked against conversion_performance.json; PA-2026-03's null impact field was confirmed directly in previous_pricing_actions.json rather than assumed.",
+      "demo_narrative_tip": "Good scenario for showing the agent correctly saying 'we don't have that data yet' instead of guessing - ties into the continuous evaluation capability."
+    },
+    {
+      "scenario_id": "SC-07",
+      "title": "Reputation Risk from 'Loyalty Penalty' Media Coverage",
+      "analyst_trigger_query": "Give me a briefing on customer sentiment around renewal pricing this quarter before my meeting with the Head of Pricing.",
+      "business_context": "Routine executive briefing pulling together social sentiment, press coverage and internal feedback on a recurring theme.",
+      "data_sources_used": [
+        "unstructured_market_intelligence.json (MI-002, MI-014, MI-016)",
+        "customer_feedback.json (monthly_metrics: nps_score and complaints_count.pricing_renewal trends; verbatim_comments)"
+      ],
+      "expected_agent_workflow": [
+        "Aggregate all market intelligence items tagged 'price_walking' or 'renewal_pricing' over the quarter",
+        "Aggregate matching internal NPS/complaints/verbatim data over the same period",
+        "Summarise into an executive-ready briefing with trend direction and supporting evidence",
+        "Highlight whether the theme is worsening, stable, or improving"
+      ],
+      "key_findings": [
+        "Three separate external mentions of 'loyalty penalty'-style criticism appeared over the period (viral social post MI-014, Which? article MI-016, earlier complaint thread MI-002)",
+        "nps_score declined from 21.3 to 17.7 over the same 12 months, and pricing/renewal complaints grew from 39 to 66/month while other complaint categories stayed flat",
+        "Verbatim comments consistently cite comparison-site price gaps rather than service issues as the driver of dissatisfaction"
+      ],
+      "recommended_action": "Recommend the Head of Pricing review renewal pricing methodology for long-tenure customers specifically, and consider a proactive communications response ahead of further press coverage rather than a purely reactive one.",
+      "reasoning": "This is a convergent signal from three independent source types (press, social, and internal complaints/NPS) over the same period, which is a stronger basis for executive attention than any single source alone.",
+      "specialist_agents_involved": ["Market Intelligence Agent", "Recommendation Agent"],
+      "risk_flags": ["Sentiment/NPS correlation does not by itself prove renewal pricing is the sole cause - recommend as a hypothesis to validate, not a confirmed root cause"],
+      "verification_note": "NPS and complaint figures re-checked directly against customer_feedback.json.",
+      "demo_narrative_tip": "Useful as a 'briefing' style scenario distinct from the others - shows summarisation for a non-technical exec audience."
+    },
+    {
+      "scenario_id": "SC-08",
+      "title": "Experienced Driver Segment Rate Decrease Performance Review",
+      "analyst_trigger_query": "We cut rates for the 46-65 segment five months ago - did it work, and should we keep it?",
+      "business_context": "Standard post-implementation review of a specific, dated pricing action.",
+      "data_sources_used": [
+        "previous_pricing_actions.json (PA-2025-05, Experienced 46-65, -2.5% rate decrease, logged 3-month impact)",
+        "conversion_performance.json (segment: Experienced (46-65), PCW channel, months following Nov-2025)",
+        "claims_performance.json (segment: Experienced (46-65), loss_ratio_pct, months following Nov-2025)"
+      ],
+      "expected_agent_workflow": [
+        "Retrieve the specific pricing action record and its logged 3-month impact",
+        "Check the underlying raw monthly conversion and claims series for the same segment over the following months",
+        "State clearly whether the raw series confirms, contradicts, or is simply too noisy to isolate the logged figure",
+        "Recommend whether to keep, extend, reverse, or adjust the action"
+      ],
+      "key_findings": [
+        "PA-2025-05 logged a +2.2% conversion improvement, +3.5pp loss ratio impact and +0.7 PCW rank improvement at the 3-month mark - this is the authoritative recorded KPI snapshot for the action",
+        "The raw monthly series for the segment shows loss_ratio_pct staying in the 56.2-59.2% range and PCW rank staying in the 1.7-1.9 range throughout the months following the decrease - consistent with the logged result (no deterioration, rank stayed excellent) but too noisy month-to-month (±1.5pp / ±0.3 rank) to independently re-derive the exact logged magnitude from the raw series alone",
+        "Loss ratio has not moved outside the range seen across the rest of the year, i.e. the segment has not become unprofitable as a result"
+      ],
+      "recommended_action": "Keep the rate decrease in place; no further action needed beyond continued quarterly monitoring.",
+      "reasoning": "The raw data does not contradict the logged result and shows no adverse trend, which is enough to justify keeping the action - but the agent should be explicit that raw monthly noise means it is confirming 'no harm', not independently re-proving the exact recorded percentage.",
+      "specialist_agents_involved": ["Claims Analysis Agent", "Conversion Analysis Agent", "Recommendation Agent"],
+      "risk_flags": ["Avoid overstating precision - claims and conversion data at monthly granularity cannot cleanly isolate a single pricing action's exact effect size from ordinary month-to-month variation"],
+      "verification_note": "This finding was rewritten after checking the actual monthly series: it is flat/noisy (56.2-59.2% loss ratio, 1.7-1.9 PCW rank) rather than showing a clean, isolatable step-change, so the scenario now states that honestly instead of claiming an 'independent confirmation' of the exact logged figures.",
+      "demo_narrative_tip": "Use this to show the agent doing verification/audit of a past decision while being honest about the limits of monthly data for isolating a single action's effect - a good 'closing the loop' scenario."
+    },
+    {
+      "scenario_id": "SC-09",
+      "title": "Emerging Risk Flag: EV Repair Cost Inflation (Data Gap Identified)",
+      "analyst_trigger_query": "Are electric vehicles becoming a loss-making segment for us the way the trade press suggests?",
+      "business_context": "Analyst has seen industry commentary on EV repair costs and wants to know Aviva's specific exposure.",
+      "data_sources_used": [
+        "unstructured_market_intelligence.json (MI-005 Thatcham EV repair cost report)",
+        "claims_performance.json (checked for a vehicle powertrain/EV field - none exists)"
+      ],
+      "expected_agent_workflow": [
+        "Retrieve the relevant market intelligence item on EV repair costs",
+        "Attempt to find a matching internal data cut by vehicle powertrain type",
+        "Recognise that no such segmentation currently exists in the available claims data",
+        "Report the gap explicitly rather than guessing, and recommend a data collection action"
+      ],
+      "key_findings": [
+        "Thatcham Research reporting (MI-005) indicates EV repair times are ~14% longer than ICE vehicles with higher total-loss frequency",
+        "claims_performance.json segments by age band and region only - there is no vehicle powertrain (ICE/hybrid/EV) field available to test this internally",
+        "This is a genuine blind spot: the copilot cannot confirm or deny Aviva's specific EV loss experience with the data currently available"
+      ],
+      "recommended_action": "Do not make a pricing recommendation on EVs from this data. Recommend adding vehicle powertrain type as a claims and exposure reporting dimension so this question can be answered directly next quarter.",
+      "reasoning": "Fabricating a conclusion from external industry data alone, without internal verification, would be a confident-sounding but ungrounded recommendation - the correct behaviour is to flag the data gap explicitly.",
+      "specialist_agents_involved": ["Market Intelligence Agent", "Claims Analysis Agent", "Recommendation Agent"],
+      "risk_flags": ["High-value scenario for demonstrating the agent's honesty about the limits of available data rather than hallucinating a segment-level answer"],
+      "verification_note": "Confirmed directly against the claims_performance.json schema that no powertrain/EV field exists - the 'gap' claimed here is real, not assumed.",
+      "demo_narrative_tip": "Deliberately included as a 'the agent should say I don't know / here's what data we'd need' scenario - important for building interviewer trust in the solution's honesty."
+    },
+    {
+      "scenario_id": "SC-10",
+      "title": "Quarterly Pricing Action Effectiveness & Model Drift Review",
+      "analyst_trigger_query": "Give me a scorecard of every pricing action we've taken in the last two years - which ones worked as expected, and is our recommendation model still trustworthy?",
+      "business_context": "Periodic governance review of the copilot's own track record, addressing the challenge's continuous evaluation and model drift requirement.",
+      "data_sources_used": [
+        "previous_pricing_actions.json (all 10 records: rationale/action_type vs. logged observed_impact_after_3_months)",
+        "claims_performance.json (segment: Young Driver (17-25), used to independently check the trend for actions that fall within its 2025-07 to 2026-06 history)"
+      ],
+      "expected_agent_workflow": [
+        "Retrieve all pricing actions in the log",
+        "For each, check whether the direction of the logged impact matches the stated rationale (e.g. a rate increase should reduce loss ratio and reduce conversion)",
+        "Where the action falls within claims_performance.json's date range, independently check the raw claims trend as a second opinion; where it predates the file's history, say so rather than fabricating a check",
+        "Identify any pattern of the model/agent's recommendations systematically over- or under-estimating impact",
+        "Report an overall confidence assessment and flag if recalibration is needed"
+      ],
+      "key_findings": [
+        "9 of 10 logged pricing actions have a measurable 3-month impact; PA-2026-03 (telematics national expansion, May-2026) is too recent and its impact field is null",
+        "In every logged action, the direction of impact matches the stated rationale - rate increases reduced loss ratio and reduced conversion, discounts/decreases improved conversion and modestly raised loss ratio - so there is no case of an outcome opposite to what was intended",
+        "For Young Driver (17-25), the only segment with in-window claims history covering both rate increases (PA-2025-04, Sep-2025) and after, loss_ratio_pct kept climbing straight through the increase, from 85.6% in Jul-2025 to 96.3% by Jun-2026, while claim_frequency_pct rose from 9.58% to 11.77% over the same window - the rate action produced its logged short-term benefit, but underlying claims inflation is now outpacing it",
+        "PA-2024-01 (Sep-2024) predates claims_performance.json's history (which starts Jul-2025), so its logged impact could only be checked against the pricing-actions record itself, not independently re-derived from raw claims data in this dataset"
+      ],
+      "recommended_action": "No full model recalibration required - every logged action's direction matches its rationale, and none point to a systemic failure. But introduce a specific drift watch on the Young Driver segment specifically, since it is the one place where the raw claims trend has continued deteriorating despite two rate actions, and where the effect (if any) of the most recent action (PA-2026-03) is not yet measurable.",
+      "reasoning": "A defensible continuous-evaluation process should say what it can and can't verify from the data it actually has - here it correctly finds no systemic model failure, one specific and well-evidenced segment needing a closer watch, and one action that is honestly too recent to score yet.",
+      "specialist_agents_involved": ["Claims Analysis Agent", "Conversion Analysis Agent", "Recommendation Agent"],
+      "risk_flags": ["Only 10 actions and roughly 2 years of history are available - statistical confidence in any drift signal is illustrative, not rigorous, and should be caveated as such in a live demo", "Two of the ten actions (PA-2024-01, PA-2024-02) predate the claims/conversion data files entirely and cannot be independently re-checked, only taken from the log"],
+      "verification_note": "Rewritten after checking the raw data: an earlier draft claimed the two young-driver rate increases showed 'diminishing returns' per action, but the logged per-point figures (-6.5pp for +12%, -5.8pp for +8%) actually show slightly increasing per-point effectiveness, not diminishing. The defensible, verifiable finding is instead that the raw claims trend kept worsening regardless of either action, which is directly visible in claims_performance.json.",
+      "demo_narrative_tip": "Save this for last in the demo - it directly answers the challenge's 'continuous evaluation & model drift' requirement and shows the agent auditing its own past advice honestly, including admitting what it can't check."
+    }
+  ]
+}

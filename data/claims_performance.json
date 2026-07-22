@@ -1,0 +1,934 @@
+{
+  "dataset": "claims_performance",
+  "description": "Synthetic monthly claims performance for Private Car Motor Insurance, by customer segment (segment-level rows) and by region for weather-related perils (regional_weather_claims, an independent axis).",
+  "currency": "GBP",
+  "generated_for": "Aviva Pricing Analyst Copilot challenge - synthetic data only",
+  "records": [
+    {
+      "period": "2025-07",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Young Driver (17-25)",
+      "region": "London & South East",
+      "policies_in_force": 5190,
+      "earned_premium_gbp": 7410311,
+      "incurred_claims_gbp": 6343226,
+      "claim_count": 497,
+      "claim_frequency_pct": 9.58,
+      "average_claim_severity_gbp": 12763,
+      "loss_ratio_pct": 85.6
+    },
+    {
+      "period": "2025-08",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Young Driver (17-25)",
+      "region": "Midlands",
+      "policies_in_force": 5329,
+      "earned_premium_gbp": 7535545,
+      "incurred_claims_gbp": 6525782,
+      "claim_count": 504,
+      "claim_frequency_pct": 9.46,
+      "average_claim_severity_gbp": 12948,
+      "loss_ratio_pct": 86.6
+    },
+    {
+      "period": "2025-09",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Young Driver (17-25)",
+      "region": "North of England",
+      "policies_in_force": 5161,
+      "earned_premium_gbp": 7363413,
+      "incurred_claims_gbp": 6413533,
+      "claim_count": 506,
+      "claim_frequency_pct": 9.81,
+      "average_claim_severity_gbp": 12675,
+      "loss_ratio_pct": 87.1
+    },
+    {
+      "period": "2025-10",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Young Driver (17-25)",
+      "region": "Scotland & NI",
+      "policies_in_force": 5329,
+      "earned_premium_gbp": 7689738,
+      "incurred_claims_gbp": 6874626,
+      "claim_count": 538,
+      "claim_frequency_pct": 10.1,
+      "average_claim_severity_gbp": 12778,
+      "loss_ratio_pct": 89.4
+    },
+    {
+      "period": "2025-11",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Young Driver (17-25)",
+      "region": "Wales & South West",
+      "policies_in_force": 5053,
+      "earned_premium_gbp": 7440625,
+      "incurred_claims_gbp": 6644478,
+      "claim_count": 515,
+      "claim_frequency_pct": 10.19,
+      "average_claim_severity_gbp": 12902,
+      "loss_ratio_pct": 89.3
+    },
+    {
+      "period": "2025-12",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Young Driver (17-25)",
+      "region": "London & South East",
+      "policies_in_force": 5192,
+      "earned_premium_gbp": 7372779,
+      "incurred_claims_gbp": 6672365,
+      "claim_count": 530,
+      "claim_frequency_pct": 10.2,
+      "average_claim_severity_gbp": 12589,
+      "loss_ratio_pct": 90.5
+    },
+    {
+      "period": "2026-01",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Young Driver (17-25)",
+      "region": "Midlands",
+      "policies_in_force": 5097,
+      "earned_premium_gbp": 7337405,
+      "incurred_claims_gbp": 6677039,
+      "claim_count": 553,
+      "claim_frequency_pct": 10.85,
+      "average_claim_severity_gbp": 12074,
+      "loss_ratio_pct": 91.0
+    },
+    {
+      "period": "2026-02",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Young Driver (17-25)",
+      "region": "North of England",
+      "policies_in_force": 5185,
+      "earned_premium_gbp": 7656794,
+      "incurred_claims_gbp": 7028937,
+      "claim_count": 554,
+      "claim_frequency_pct": 10.68,
+      "average_claim_severity_gbp": 12688,
+      "loss_ratio_pct": 91.8
+    },
+    {
+      "period": "2026-03",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Young Driver (17-25)",
+      "region": "Scotland & NI",
+      "policies_in_force": 5243,
+      "earned_premium_gbp": 7410224,
+      "incurred_claims_gbp": 6898919,
+      "claim_count": 581,
+      "claim_frequency_pct": 11.08,
+      "average_claim_severity_gbp": 11874,
+      "loss_ratio_pct": 93.1
+    },
+    {
+      "period": "2026-04",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Young Driver (17-25)",
+      "region": "Wales & South West",
+      "policies_in_force": 5235,
+      "earned_premium_gbp": 7625980,
+      "incurred_claims_gbp": 7176047,
+      "claim_count": 576,
+      "claim_frequency_pct": 11.0,
+      "average_claim_severity_gbp": 12458,
+      "loss_ratio_pct": 94.1
+    },
+    {
+      "period": "2026-05",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Young Driver (17-25)",
+      "region": "London & South East",
+      "policies_in_force": 5166,
+      "earned_premium_gbp": 7613428,
+      "incurred_claims_gbp": 7088101,
+      "claim_count": 590,
+      "claim_frequency_pct": 11.42,
+      "average_claim_severity_gbp": 12014,
+      "loss_ratio_pct": 93.1
+    },
+    {
+      "period": "2026-06",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Young Driver (17-25)",
+      "region": "Midlands",
+      "policies_in_force": 5101,
+      "earned_premium_gbp": 7343252,
+      "incurred_claims_gbp": 7071552,
+      "claim_count": 600,
+      "claim_frequency_pct": 11.77,
+      "average_claim_severity_gbp": 11786,
+      "loss_ratio_pct": 96.3
+    },
+    {
+      "period": "2025-07",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Standard (26-45)",
+      "region": "London & South East",
+      "policies_in_force": 20933,
+      "earned_premium_gbp": 12877369,
+      "incurred_claims_gbp": 8885385,
+      "claim_count": 1208,
+      "claim_frequency_pct": 5.77,
+      "average_claim_severity_gbp": 7355,
+      "loss_ratio_pct": 69.0
+    },
+    {
+      "period": "2025-08",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Standard (26-45)",
+      "region": "Midlands",
+      "policies_in_force": 20886,
+      "earned_premium_gbp": 13034110,
+      "incurred_claims_gbp": 8784990,
+      "claim_count": 1182,
+      "claim_frequency_pct": 5.66,
+      "average_claim_severity_gbp": 7432,
+      "loss_ratio_pct": 67.4
+    },
+    {
+      "period": "2025-09",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Standard (26-45)",
+      "region": "North of England",
+      "policies_in_force": 20933,
+      "earned_premium_gbp": 12949072,
+      "incurred_claims_gbp": 8921911,
+      "claim_count": 1185,
+      "claim_frequency_pct": 5.66,
+      "average_claim_severity_gbp": 7529,
+      "loss_ratio_pct": 68.9
+    },
+    {
+      "period": "2025-10",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Standard (26-45)",
+      "region": "Scotland & NI",
+      "policies_in_force": 21135,
+      "earned_premium_gbp": 12883255,
+      "incurred_claims_gbp": 8966745,
+      "claim_count": 1215,
+      "claim_frequency_pct": 5.75,
+      "average_claim_severity_gbp": 7380,
+      "loss_ratio_pct": 69.6
+    },
+    {
+      "period": "2025-11",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Standard (26-45)",
+      "region": "Wales & South West",
+      "policies_in_force": 20878,
+      "earned_premium_gbp": 12733922,
+      "incurred_claims_gbp": 8811874,
+      "claim_count": 1213,
+      "claim_frequency_pct": 5.81,
+      "average_claim_severity_gbp": 7265,
+      "loss_ratio_pct": 69.2
+    },
+    {
+      "period": "2025-12",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Standard (26-45)",
+      "region": "London & South East",
+      "policies_in_force": 20987,
+      "earned_premium_gbp": 12673256,
+      "incurred_claims_gbp": 8605141,
+      "claim_count": 1190,
+      "claim_frequency_pct": 5.67,
+      "average_claim_severity_gbp": 7231,
+      "loss_ratio_pct": 67.9
+    },
+    {
+      "period": "2026-01",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Standard (26-45)",
+      "region": "Midlands",
+      "policies_in_force": 21011,
+      "earned_premium_gbp": 12802206,
+      "incurred_claims_gbp": 8807918,
+      "claim_count": 1309,
+      "claim_frequency_pct": 6.23,
+      "average_claim_severity_gbp": 6729,
+      "loss_ratio_pct": 68.8
+    },
+    {
+      "period": "2026-02",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Standard (26-45)",
+      "region": "North of England",
+      "policies_in_force": 21084,
+      "earned_premium_gbp": 12791975,
+      "incurred_claims_gbp": 8941591,
+      "claim_count": 1267,
+      "claim_frequency_pct": 6.01,
+      "average_claim_severity_gbp": 7057,
+      "loss_ratio_pct": 69.9
+    },
+    {
+      "period": "2026-03",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Standard (26-45)",
+      "region": "Scotland & NI",
+      "policies_in_force": 21125,
+      "earned_premium_gbp": 12911050,
+      "incurred_claims_gbp": 8973180,
+      "claim_count": 1229,
+      "claim_frequency_pct": 5.82,
+      "average_claim_severity_gbp": 7301,
+      "loss_ratio_pct": 69.5
+    },
+    {
+      "period": "2026-04",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Standard (26-45)",
+      "region": "Wales & South West",
+      "policies_in_force": 21054,
+      "earned_premium_gbp": 12945394,
+      "incurred_claims_gbp": 9074721,
+      "claim_count": 1289,
+      "claim_frequency_pct": 6.12,
+      "average_claim_severity_gbp": 7040,
+      "loss_ratio_pct": 70.1
+    },
+    {
+      "period": "2026-05",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Standard (26-45)",
+      "region": "London & South East",
+      "policies_in_force": 21102,
+      "earned_premium_gbp": 12762106,
+      "incurred_claims_gbp": 8665470,
+      "claim_count": 1351,
+      "claim_frequency_pct": 6.4,
+      "average_claim_severity_gbp": 6414,
+      "loss_ratio_pct": 67.9
+    },
+    {
+      "period": "2026-06",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Standard (26-45)",
+      "region": "Midlands",
+      "policies_in_force": 20931,
+      "earned_premium_gbp": 13204643,
+      "incurred_claims_gbp": 8965953,
+      "claim_count": 1227,
+      "claim_frequency_pct": 5.86,
+      "average_claim_severity_gbp": 7307,
+      "loss_ratio_pct": 67.9
+    },
+    {
+      "period": "2025-07",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Experienced (46-65)",
+      "region": "London & South East",
+      "policies_in_force": 18545,
+      "earned_premium_gbp": 8952814,
+      "incurred_claims_gbp": 5076246,
+      "claim_count": 751,
+      "claim_frequency_pct": 4.05,
+      "average_claim_severity_gbp": 6759,
+      "loss_ratio_pct": 56.7
+    },
+    {
+      "period": "2025-08",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Experienced (46-65)",
+      "region": "Midlands",
+      "policies_in_force": 18633,
+      "earned_premium_gbp": 9137445,
+      "incurred_claims_gbp": 5226619,
+      "claim_count": 756,
+      "claim_frequency_pct": 4.06,
+      "average_claim_severity_gbp": 6914,
+      "loss_ratio_pct": 57.2
+    },
+    {
+      "period": "2025-09",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Experienced (46-65)",
+      "region": "North of England",
+      "policies_in_force": 18624,
+      "earned_premium_gbp": 9074084,
+      "incurred_claims_gbp": 5317413,
+      "claim_count": 702,
+      "claim_frequency_pct": 3.77,
+      "average_claim_severity_gbp": 7575,
+      "loss_ratio_pct": 58.6
+    },
+    {
+      "period": "2025-10",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Experienced (46-65)",
+      "region": "Scotland & NI",
+      "policies_in_force": 18500,
+      "earned_premium_gbp": 8845243,
+      "incurred_claims_gbp": 5077169,
+      "claim_count": 777,
+      "claim_frequency_pct": 4.2,
+      "average_claim_severity_gbp": 6534,
+      "loss_ratio_pct": 57.4
+    },
+    {
+      "period": "2025-11",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Experienced (46-65)",
+      "region": "Wales & South West",
+      "policies_in_force": 18484,
+      "earned_premium_gbp": 9123525,
+      "incurred_claims_gbp": 5401127,
+      "claim_count": 738,
+      "claim_frequency_pct": 3.99,
+      "average_claim_severity_gbp": 7319,
+      "loss_ratio_pct": 59.2
+    },
+    {
+      "period": "2025-12",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Experienced (46-65)",
+      "region": "London & South East",
+      "policies_in_force": 18404,
+      "earned_premium_gbp": 9030308,
+      "incurred_claims_gbp": 5219518,
+      "claim_count": 766,
+      "claim_frequency_pct": 4.16,
+      "average_claim_severity_gbp": 6814,
+      "loss_ratio_pct": 57.8
+    },
+    {
+      "period": "2026-01",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Experienced (46-65)",
+      "region": "Midlands",
+      "policies_in_force": 18451,
+      "earned_premium_gbp": 8672003,
+      "incurred_claims_gbp": 5038434,
+      "claim_count": 712,
+      "claim_frequency_pct": 3.86,
+      "average_claim_severity_gbp": 7076,
+      "loss_ratio_pct": 58.1
+    },
+    {
+      "period": "2026-02",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Experienced (46-65)",
+      "region": "North of England",
+      "policies_in_force": 18621,
+      "earned_premium_gbp": 9162512,
+      "incurred_claims_gbp": 5295932,
+      "claim_count": 767,
+      "claim_frequency_pct": 4.12,
+      "average_claim_severity_gbp": 6905,
+      "loss_ratio_pct": 57.8
+    },
+    {
+      "period": "2026-03",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Experienced (46-65)",
+      "region": "Scotland & NI",
+      "policies_in_force": 18407,
+      "earned_premium_gbp": 9062834,
+      "incurred_claims_gbp": 5220192,
+      "claim_count": 736,
+      "claim_frequency_pct": 4.0,
+      "average_claim_severity_gbp": 7093,
+      "loss_ratio_pct": 57.6
+    },
+    {
+      "period": "2026-04",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Experienced (46-65)",
+      "region": "Wales & South West",
+      "policies_in_force": 18507,
+      "earned_premium_gbp": 8744488,
+      "incurred_claims_gbp": 5115525,
+      "claim_count": 768,
+      "claim_frequency_pct": 4.15,
+      "average_claim_severity_gbp": 6661,
+      "loss_ratio_pct": 58.5
+    },
+    {
+      "period": "2026-05",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Experienced (46-65)",
+      "region": "London & South East",
+      "policies_in_force": 18390,
+      "earned_premium_gbp": 8607749,
+      "incurred_claims_gbp": 4966671,
+      "claim_count": 688,
+      "claim_frequency_pct": 3.74,
+      "average_claim_severity_gbp": 7219,
+      "loss_ratio_pct": 57.7
+    },
+    {
+      "period": "2026-06",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Experienced (46-65)",
+      "region": "Midlands",
+      "policies_in_force": 18622,
+      "earned_premium_gbp": 9081131,
+      "incurred_claims_gbp": 5103596,
+      "claim_count": 721,
+      "claim_frequency_pct": 3.87,
+      "average_claim_severity_gbp": 7078,
+      "loss_ratio_pct": 56.2
+    },
+    {
+      "period": "2025-07",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Senior (66+)",
+      "region": "London & South East",
+      "policies_in_force": 7431,
+      "earned_premium_gbp": 4077748,
+      "incurred_claims_gbp": 2564903,
+      "claim_count": 325,
+      "claim_frequency_pct": 4.38,
+      "average_claim_severity_gbp": 7892,
+      "loss_ratio_pct": 62.9
+    },
+    {
+      "period": "2025-08",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Senior (66+)",
+      "region": "Midlands",
+      "policies_in_force": 7258,
+      "earned_premium_gbp": 4169079,
+      "incurred_claims_gbp": 2643196,
+      "claim_count": 339,
+      "claim_frequency_pct": 4.67,
+      "average_claim_severity_gbp": 7797,
+      "loss_ratio_pct": 63.4
+    },
+    {
+      "period": "2025-09",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Senior (66+)",
+      "region": "North of England",
+      "policies_in_force": 7309,
+      "earned_premium_gbp": 4068234,
+      "incurred_claims_gbp": 2595533,
+      "claim_count": 354,
+      "claim_frequency_pct": 4.85,
+      "average_claim_severity_gbp": 7332,
+      "loss_ratio_pct": 63.8
+    },
+    {
+      "period": "2025-10",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Senior (66+)",
+      "region": "Scotland & NI",
+      "policies_in_force": 7414,
+      "earned_premium_gbp": 4139755,
+      "incurred_claims_gbp": 2603906,
+      "claim_count": 360,
+      "claim_frequency_pct": 4.85,
+      "average_claim_severity_gbp": 7233,
+      "loss_ratio_pct": 62.9
+    },
+    {
+      "period": "2025-11",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Senior (66+)",
+      "region": "Wales & South West",
+      "policies_in_force": 7160,
+      "earned_premium_gbp": 4030845,
+      "incurred_claims_gbp": 2503155,
+      "claim_count": 333,
+      "claim_frequency_pct": 4.65,
+      "average_claim_severity_gbp": 7517,
+      "loss_ratio_pct": 62.1
+    },
+    {
+      "period": "2025-12",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Senior (66+)",
+      "region": "London & South East",
+      "policies_in_force": 7186,
+      "earned_premium_gbp": 4074343,
+      "incurred_claims_gbp": 2554613,
+      "claim_count": 337,
+      "claim_frequency_pct": 4.69,
+      "average_claim_severity_gbp": 7580,
+      "loss_ratio_pct": 62.7
+    },
+    {
+      "period": "2026-01",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Senior (66+)",
+      "region": "Midlands",
+      "policies_in_force": 7166,
+      "earned_premium_gbp": 4099552,
+      "incurred_claims_gbp": 2554021,
+      "claim_count": 333,
+      "claim_frequency_pct": 4.64,
+      "average_claim_severity_gbp": 7670,
+      "loss_ratio_pct": 62.3
+    },
+    {
+      "period": "2026-02",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Senior (66+)",
+      "region": "North of England",
+      "policies_in_force": 7398,
+      "earned_premium_gbp": 4071847,
+      "incurred_claims_gbp": 2561192,
+      "claim_count": 347,
+      "claim_frequency_pct": 4.69,
+      "average_claim_severity_gbp": 7381,
+      "loss_ratio_pct": 62.9
+    },
+    {
+      "period": "2026-03",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Senior (66+)",
+      "region": "Scotland & NI",
+      "policies_in_force": 7442,
+      "earned_premium_gbp": 4186577,
+      "incurred_claims_gbp": 2725462,
+      "claim_count": 356,
+      "claim_frequency_pct": 4.78,
+      "average_claim_severity_gbp": 7656,
+      "loss_ratio_pct": 65.1
+    },
+    {
+      "period": "2026-04",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Senior (66+)",
+      "region": "Wales & South West",
+      "policies_in_force": 7358,
+      "earned_premium_gbp": 4043940,
+      "incurred_claims_gbp": 2580034,
+      "claim_count": 361,
+      "claim_frequency_pct": 4.9,
+      "average_claim_severity_gbp": 7147,
+      "loss_ratio_pct": 63.8
+    },
+    {
+      "period": "2026-05",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Senior (66+)",
+      "region": "London & South East",
+      "policies_in_force": 7366,
+      "earned_premium_gbp": 4102958,
+      "incurred_claims_gbp": 2617687,
+      "claim_count": 358,
+      "claim_frequency_pct": 4.86,
+      "average_claim_severity_gbp": 7312,
+      "loss_ratio_pct": 63.8
+    },
+    {
+      "period": "2026-06",
+      "product_line": "Private Car Motor - Comprehensive",
+      "segment": "Senior (66+)",
+      "region": "Midlands",
+      "policies_in_force": 7200,
+      "earned_premium_gbp": 3925703,
+      "incurred_claims_gbp": 2465341,
+      "claim_count": 387,
+      "claim_frequency_pct": 5.37,
+      "average_claim_severity_gbp": 6370,
+      "loss_ratio_pct": 62.8
+    }
+  ],
+  "regional_weather_claims": [
+    {
+      "period": "2025-07",
+      "region": "London & South East",
+      "weather_related_claim_count": 20
+    },
+    {
+      "period": "2025-07",
+      "region": "Midlands",
+      "weather_related_claim_count": 13
+    },
+    {
+      "period": "2025-07",
+      "region": "North of England",
+      "weather_related_claim_count": 19
+    },
+    {
+      "period": "2025-07",
+      "region": "Scotland & NI",
+      "weather_related_claim_count": 15
+    },
+    {
+      "period": "2025-07",
+      "region": "Wales & South West",
+      "weather_related_claim_count": 10
+    },
+    {
+      "period": "2025-08",
+      "region": "London & South East",
+      "weather_related_claim_count": 16
+    },
+    {
+      "period": "2025-08",
+      "region": "Midlands",
+      "weather_related_claim_count": 12
+    },
+    {
+      "period": "2025-08",
+      "region": "North of England",
+      "weather_related_claim_count": 14
+    },
+    {
+      "period": "2025-08",
+      "region": "Scotland & NI",
+      "weather_related_claim_count": 13
+    },
+    {
+      "period": "2025-08",
+      "region": "Wales & South West",
+      "weather_related_claim_count": 13
+    },
+    {
+      "period": "2025-09",
+      "region": "London & South East",
+      "weather_related_claim_count": 16
+    },
+    {
+      "period": "2025-09",
+      "region": "Midlands",
+      "weather_related_claim_count": 14
+    },
+    {
+      "period": "2025-09",
+      "region": "North of England",
+      "weather_related_claim_count": 14
+    },
+    {
+      "period": "2025-09",
+      "region": "Scotland & NI",
+      "weather_related_claim_count": 11
+    },
+    {
+      "period": "2025-09",
+      "region": "Wales & South West",
+      "weather_related_claim_count": 13
+    },
+    {
+      "period": "2025-10",
+      "region": "London & South East",
+      "weather_related_claim_count": 16
+    },
+    {
+      "period": "2025-10",
+      "region": "Midlands",
+      "weather_related_claim_count": 17
+    },
+    {
+      "period": "2025-10",
+      "region": "North of England",
+      "weather_related_claim_count": 35
+    },
+    {
+      "period": "2025-10",
+      "region": "Scotland & NI",
+      "weather_related_claim_count": 44
+    },
+    {
+      "period": "2025-10",
+      "region": "Wales & South West",
+      "weather_related_claim_count": 10
+    },
+    {
+      "period": "2025-11",
+      "region": "London & South East",
+      "weather_related_claim_count": 15
+    },
+    {
+      "period": "2025-11",
+      "region": "Midlands",
+      "weather_related_claim_count": 16
+    },
+    {
+      "period": "2025-11",
+      "region": "North of England",
+      "weather_related_claim_count": 49
+    },
+    {
+      "period": "2025-11",
+      "region": "Scotland & NI",
+      "weather_related_claim_count": 27
+    },
+    {
+      "period": "2025-11",
+      "region": "Wales & South West",
+      "weather_related_claim_count": 16
+    },
+    {
+      "period": "2025-12",
+      "region": "London & South East",
+      "weather_related_claim_count": 16
+    },
+    {
+      "period": "2025-12",
+      "region": "Midlands",
+      "weather_related_claim_count": 12
+    },
+    {
+      "period": "2025-12",
+      "region": "North of England",
+      "weather_related_claim_count": 16
+    },
+    {
+      "period": "2025-12",
+      "region": "Scotland & NI",
+      "weather_related_claim_count": 12
+    },
+    {
+      "period": "2025-12",
+      "region": "Wales & South West",
+      "weather_related_claim_count": 13
+    },
+    {
+      "period": "2026-01",
+      "region": "London & South East",
+      "weather_related_claim_count": 16
+    },
+    {
+      "period": "2026-01",
+      "region": "Midlands",
+      "weather_related_claim_count": 17
+    },
+    {
+      "period": "2026-01",
+      "region": "North of England",
+      "weather_related_claim_count": 16
+    },
+    {
+      "period": "2026-01",
+      "region": "Scotland & NI",
+      "weather_related_claim_count": 9
+    },
+    {
+      "period": "2026-01",
+      "region": "Wales & South West",
+      "weather_related_claim_count": 11
+    },
+    {
+      "period": "2026-02",
+      "region": "London & South East",
+      "weather_related_claim_count": 18
+    },
+    {
+      "period": "2026-02",
+      "region": "Midlands",
+      "weather_related_claim_count": 11
+    },
+    {
+      "period": "2026-02",
+      "region": "North of England",
+      "weather_related_claim_count": 16
+    },
+    {
+      "period": "2026-02",
+      "region": "Scotland & NI",
+      "weather_related_claim_count": 11
+    },
+    {
+      "period": "2026-02",
+      "region": "Wales & South West",
+      "weather_related_claim_count": 16
+    },
+    {
+      "period": "2026-03",
+      "region": "London & South East",
+      "weather_related_claim_count": 21
+    },
+    {
+      "period": "2026-03",
+      "region": "Midlands",
+      "weather_related_claim_count": 14
+    },
+    {
+      "period": "2026-03",
+      "region": "North of England",
+      "weather_related_claim_count": 15
+    },
+    {
+      "period": "2026-03",
+      "region": "Scotland & NI",
+      "weather_related_claim_count": 12
+    },
+    {
+      "period": "2026-03",
+      "region": "Wales & South West",
+      "weather_related_claim_count": 15
+    },
+    {
+      "period": "2026-04",
+      "region": "London & South East",
+      "weather_related_claim_count": 20
+    },
+    {
+      "period": "2026-04",
+      "region": "Midlands",
+      "weather_related_claim_count": 17
+    },
+    {
+      "period": "2026-04",
+      "region": "North of England",
+      "weather_related_claim_count": 17
+    },
+    {
+      "period": "2026-04",
+      "region": "Scotland & NI",
+      "weather_related_claim_count": 14
+    },
+    {
+      "period": "2026-04",
+      "region": "Wales & South West",
+      "weather_related_claim_count": 15
+    },
+    {
+      "period": "2026-05",
+      "region": "London & South East",
+      "weather_related_claim_count": 18
+    },
+    {
+      "period": "2026-05",
+      "region": "Midlands",
+      "weather_related_claim_count": 12
+    },
+    {
+      "period": "2026-05",
+      "region": "North of England",
+      "weather_related_claim_count": 14
+    },
+    {
+      "period": "2026-05",
+      "region": "Scotland & NI",
+      "weather_related_claim_count": 11
+    },
+    {
+      "period": "2026-05",
+      "region": "Wales & South West",
+      "weather_related_claim_count": 11
+    },
+    {
+      "period": "2026-06",
+      "region": "London & South East",
+      "weather_related_claim_count": 15
+    },
+    {
+      "period": "2026-06",
+      "region": "Midlands",
+      "weather_related_claim_count": 15
+    },
+    {
+      "period": "2026-06",
+      "region": "North of England",
+      "weather_related_claim_count": 18
+    },
+    {
+      "period": "2026-06",
+      "region": "Scotland & NI",
+      "weather_related_claim_count": 13
+    },
+    {
+      "period": "2026-06",
+      "region": "Wales & South West",
+      "weather_related_claim_count": 10
+    }
+  ]
+}
