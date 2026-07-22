@@ -12,6 +12,7 @@ from json_tools import (
     get_competitor_information,
     get_customer_feedback_metrics,
     get_previous_pricing_actions,
+    list_demo_scenarios,
     list_market_intelligence,
 )
 from math_tools import calculate_percentage_change, calculate_summary_stats, calculate_trend
@@ -25,6 +26,7 @@ for fn in (
     get_previous_pricing_actions,
     get_customer_feedback_metrics,
     list_market_intelligence,
+    list_demo_scenarios,
     get_market_intelligence_doc,
     get_claims_performance,
     get_regional_weather_claims,

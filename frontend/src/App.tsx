@@ -27,6 +27,7 @@ function AppShell() {
   const [view, setView] = useState<"chat" | "dashboard">("chat");
   const [turns, setTurns] = useState<Turn[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [showWelcome, setShowWelcome] = useState(true);
   const inputRef = useRef<HTMLInputElement>(null);
   const abortRef = useRef<AbortController | null>(null);
   const sidebar = useResizable(256, 180, 480);
@@ -44,6 +45,7 @@ function AppShell() {
     const turn = newTurn(question);
     setTurns((prev) => [...prev, turn]);
     setActiveId(turn.id);
+    setShowWelcome(false);
 
     const controller = new AbortController();
     abortRef.current = controller;
@@ -54,7 +56,13 @@ function AppShell() {
           setTurns((prev) =>
             prev.map((t) =>
               t.id === turn.id
-                ? { ...t, trace: [...t.trace, { id: event.id, tool: event.tool, category: event.category, args: event.args }] }
+                ? {
+                    ...t,
+                    trace: [
+                      ...t.trace,
+                      { id: event.id, tool: event.tool, category: event.category, args: event.args, agent: event.agent },
+                    ],
+                  }
                 : t,
             ),
           );
@@ -66,6 +74,8 @@ function AppShell() {
                 : t,
             ),
           );
+        } else if (event.type === "routing") {
+          updateTurn(turn.id, { routing: event.agents });
         } else if (event.type === "retry") {
           updateTurn(turn.id, { trace: [] });
         } else if (event.type === "final_answer") {
@@ -105,14 +115,21 @@ function AppShell() {
           <Sidebar
             turns={turns.map((t) => ({ id: t.id, question: t.question }))}
             activeId={activeId}
-            onSelect={setActiveId}
-            onNewQuestion={() => inputRef.current?.focus()}
+            onSelect={(id) => {
+              setActiveId(id);
+              setShowWelcome(false);
+            }}
+            onNewQuestion={() => {
+              setShowWelcome(true);
+              setActiveId(null);
+              inputRef.current?.focus();
+            }}
             width={sidebar.width}
           />
           <ResizeHandle onMouseDown={(e) => sidebar.onMouseDown(e, "right")} />
 
           <div className="flex flex-1 flex-col overflow-hidden">
-            {turns.length === 0 ? (
+            {showWelcome ? (
               <WelcomeScreen onAsk={ask} />
             ) : (
               <ChatWindow turns={turns} />
@@ -121,7 +138,7 @@ function AppShell() {
           </div>
 
           <ResizeHandle onMouseDown={(e) => activityPanel.onMouseDown(e, "left")} />
-          <ActivityPanel trace={activeTurn?.trace ?? []} width={activityPanel.width} />
+          <ActivityPanel trace={activeTurn?.trace ?? []} routing={activeTurn?.routing} width={activityPanel.width} />
         </div>
       )}
     </div>

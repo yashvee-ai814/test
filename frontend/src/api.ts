@@ -1,8 +1,9 @@
 export type ToolCategory = "json" | "file" | "sql" | "vector" | "math" | "other";
 
 export type AgentEvent =
-  | { type: "tool_call"; id: string; tool: string; category: ToolCategory; args: Record<string, unknown> }
-  | { type: "tool_result"; id: string; tool: string; category: ToolCategory; result: unknown }
+  | { type: "routing"; agents: string[] }
+  | { type: "tool_call"; id: string; tool: string; category: ToolCategory; args: Record<string, unknown>; agent?: string }
+  | { type: "tool_result"; id: string; tool: string; category: ToolCategory; result: unknown; agent?: string }
   | {
       type: "final_answer";
       summary: string[];

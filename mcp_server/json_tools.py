@@ -11,6 +11,7 @@ _competitor_records = _load("competitor_information.json")["records"]
 _pricing_action_records = _load("previous_pricing_actions.json")["records"]
 _feedback_monthly_metrics = _load("customer_feedback.json")["monthly_metrics"]
 _mi_index_records = _load("unstructured_market_intelligence.json")["records"]
+_demo_scenario_records = _load("demo_scenarios.json")["scenarios"]
 
 
 def get_competitor_information(quarter: str | None = None, profile_id: str | None = None) -> dict:
@@ -93,3 +94,21 @@ def list_market_intelligence(
     if tag:
         results = [r for r in results if tag in r["relevance_tags"]]
     return {"count": len(results), "records": results}
+
+
+def list_demo_scenarios() -> dict:
+    """Example analyst questions this copilot can answer - use this to answer
+    "what can you do" / "give me example questions" meta-questions about the
+    copilot itself. Returns only each scenario's id, title, and the example
+    question text - never the expected findings, recommendation, or reasoning,
+    so a real question that happens to match one of these can't be answered by
+    reading the recorded answer instead of actually retrieving and analyzing
+    the underlying data.
+    """
+    return {
+        "count": len(_demo_scenario_records),
+        "scenarios": [
+            {"scenario_id": s["scenario_id"], "title": s["title"], "example_question": s["analyst_trigger_query"]}
+            for s in _demo_scenario_records
+        ],
+    }

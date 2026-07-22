@@ -10,9 +10,9 @@ wheels/
 .venv
 
 # Generated data stores
-store/
+store/*
+!store/README.md
 .DS_Store
-.claude/scheduled_tasks.lock
 
 # Local environment overrides (copied from .env.example)
 .env

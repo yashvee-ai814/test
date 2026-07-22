@@ -12,11 +12,15 @@ from agent import stream_query
 async def main(question: str) -> None:
     print(f"Q: {question}\n")
     async for event in stream_query(question):
-        if event["type"] == "tool_call":
-            print(f"  -> [{event['category']}] calling {event['tool']}({event['args']})")
+        if event["type"] == "routing":
+            print(f"  == routing to: {', '.join(event['agents']) or '(none — straight to recommendation)'}")
+        elif event["type"] == "tool_call":
+            agent = f"{event['agent']}: " if "agent" in event else ""
+            print(f"  -> {agent}[{event['category']}] calling {event['tool']}({event['args']})")
         elif event["type"] == "tool_result":
+            agent = f"{event['agent']}: " if "agent" in event else ""
             preview = str(event["result"])[:200]
-            print(f"  <- [{event['category']}] {event['tool']} returned: {preview}")
+            print(f"  <- {agent}[{event['category']}] {event['tool']} returned: {preview}")
         elif event["type"] == "final_answer":
             print("\nSummary:")
             for line in event["summary"]:

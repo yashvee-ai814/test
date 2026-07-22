@@ -35,13 +35,14 @@ retrieval — but for "why is X happening and what should we do" questions
 6. **Explain reasoning** — state why, citing the specific numbers and sources
    that justify it (`explain_reasoning.md`).
 
-## Tool inventory (12 tools, 4 retrieval techniques)
+## Tool inventory (13 tools, 4 retrieval techniques)
 
 **Direct JSON query** (small, predictably-filtered structured data):
 - `get_competitor_information(quarter?, profile_id?)`
 - `get_previous_pricing_actions(segment_affected?, product_line?, action_type?, since?)` — structured fields only
 - `get_customer_feedback_metrics(period_from?, period_to?)` — aggregate monthly NPS/CSAT/complaints
 - `list_market_intelligence(type?, sentiment?, date_from?, date_to?, tag?)` — structured index, one-line summaries
+- `list_demo_scenarios()` — example analyst questions, for "what can you do" meta-questions
 
 **Direct file read**:
 - `get_market_intelligence_doc(id)` — full raw text of one market intelligence item

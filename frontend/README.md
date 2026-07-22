@@ -24,8 +24,12 @@ src/
                                     recommendation/reasoning) rendered as one card
     ToolCallBadge.tsx              Small "N tool calls" summary under an answer
   components/trace/
-    ActivityPanel.tsx              Right-hand panel: live trace (Trace tab) + static 12-tool
-                                    reference grouped by retrieval technique (Tool catalog tab)
+    ActivityPanel.tsx              Right-hand panel, 4 tabs: Trace (live, grouped into a
+                                    section per agent with a routing banner showing which
+                                    domains the orchestrator picked), Agents (static
+                                    reference of all 5 agents - role, skills, tool subset),
+                                    Skills (static reference of all 9 skill files), Tools
+                                    (static 13-tool reference grouped by retrieval technique)
   components/dashboard/
     Dashboard.tsx                   Fetches GET /dashboard, lays out the panels below
     LineChart.tsx                   Hand-rolled multi-series SVG line chart (hover crosshair,
@@ -50,15 +54,24 @@ src/
 ## Data contract with `backend`
 
 `POST {VITE_AGENT_API_URL}/chat` with `{"question": string}`, response is `text/event-stream`. Each event's
-`data` is JSON matching `AgentEvent` in `src/api.ts`:
+`data` is JSON matching `AgentEvent` in `src/api.ts`. `backend` is a 5-agent LangGraph graph (an
+Orchestrator that routes to up to 3 domain specialists in parallel, then a Recommendation Agent that always
+runs) — `tool_call`/`tool_result` carry an optional `agent` field naming which one made the call, and a new
+`routing` event reports the orchestrator's decision once per turn, before any specialist's tool calls arrive:
 
 | `type` | Shape |
 |---|---|
-| `tool_call` | `{ id, tool, category, args }` |
-| `tool_result` | `{ id, tool, category, result }` |
+| `routing` | `{ agents: string[] }` — which domains (`"market"`/`"claims"`/`"conversion"`) the orchestrator picked; an empty array means the question went straight to the Recommendation Agent |
+| `tool_call` | `{ id, tool, category, args, agent? }` |
+| `tool_result` | `{ id, tool, category, result, agent? }` |
 | `final_answer` | `{ summary[], trends[], investigation_areas[], recommendation, reasoning }` |
 | `retry` | `{ attempt, message }` — everything since the last `retry` (or stream start) should be discarded |
 | `error` | `{ message }` |
+
+`agent` values seen today: `"market"`, `"claims"`, `"conversion"`, `"recommend"` (the orchestrator itself
+never calls tools, so it never appears here — its decision surfaces only via the `routing` event).
+`ActivityPanel.tsx` groups `Trace` tab cards by this field into per-agent sections instead of one flat list,
+and `App.tsx` stores the latest `routing` event on the active `Turn` to render the banner above them.
 
 ## Run
 

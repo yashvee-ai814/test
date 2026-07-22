@@ -6,6 +6,7 @@ export type TraceCall = {
   category: ToolCategory;
   args: Record<string, unknown>;
   result?: unknown;
+  agent?: string;
 };
 
 export type Answer = {
@@ -20,6 +21,7 @@ export type Turn = {
   id: string;
   question: string;
   trace: TraceCall[];
+  routing?: string[];
   answer: Answer | null;
   error: string | null;
   isRunning: boolean;

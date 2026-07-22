@@ -1,8 +1,15 @@
 # mcp_server
 
-FastMCP server exposing 12 tools across 4 retrieval techniques, chosen per source file's actual shape
+FastMCP server exposing 13 tools across 4 retrieval techniques, chosen per source file's actual shape
 rather than uniformly. Runs standalone (`streamable-http` transport, its own port) so the backend connects
 to it as a genuine network service, the way it would connect to a real internal data API.
+
+`backend` is a 5-agent LangGraph graph, not a single client — each of its 4 tool-using agents (Market
+Intelligence, Claims Analysis, Conversion Analysis, Recommendation; the Orchestrator has no tools) opens its
+own `MultiServerMCPClient` connection here (`backend/graph.py`'s `_get_specialist_agent`, cached per agent
+name) and is bound only to its own scoped subset of the 13 tools below, not all of them. This server itself
+is unaware of that split — it just exposes the same 13 tools to whichever client asks, scoping happens
+entirely on the `backend` side.
 
 ## Folder structure
 
@@ -17,7 +24,7 @@ file_tools.py            Direct file-read tool (validated id -> raw markdown)
 sql_tools.py             Typed SQLite query tools - no raw-SQL tool exists by design
 vector_tools.py          Vector semantic search over the 3 free-text sources
 math_tools.py            Deterministic calculation tools (no LLM arithmetic)
-server.py                Registers all 12 tools, runs the streamable-http server
+server.py                Registers all 13 tools, runs the streamable-http server
 ```
 
 ## Tech stack
@@ -36,7 +43,7 @@ See [IMPLEMENTATION.md](../IMPLEMENTATION.md) §2 and §4 for the full per-sourc
 
 | Technique | Tools |
 |---|---|
-| Direct JSON | `get_competitor_information`, `get_previous_pricing_actions`, `get_customer_feedback_metrics`, `list_market_intelligence` |
+| Direct JSON | `get_competitor_information`, `get_previous_pricing_actions`, `get_customer_feedback_metrics`, `list_market_intelligence`, `list_demo_scenarios` |
 | Direct file read | `get_market_intelligence_doc` |
 | Typed SQLite | `get_claims_performance`, `get_regional_weather_claims`, `get_conversion_performance` |
 | Vector search | `search_unstructured_sources` |

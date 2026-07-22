@@ -6,26 +6,43 @@ data, summarises findings, highlights trends, flags what needs investigation, an
 declines to recommend) a pricing action with cited reasoning.
 
 Built as three independent services — an MCP data server, a FastAPI/LangGraph backend, and a React
-frontend — to double as a demo of MCP tool design: how different data shapes (relational, small structured,
-free-text) map to different retrieval techniques (SQLite, direct JSON, vector search), and how an LLM agent
-connects to that as a genuine network service rather than an in-process import.
+frontend — to double as a demo of two things at once: how different data shapes (relational, small
+structured, free-text) map to different retrieval techniques (SQLite, direct JSON, vector search); and how
+a single "do everything" agent can be split into a small team of scoped specialist agents that route,
+retrieve, and recommend in parallel, each with only the tools and instructions its own job needs.
 
-See [IMPLEMENTATION.md](IMPLEMENTATION.md) for the full design rationale, [CLAUDE.md](CLAUDE.md) for repo
-conventions, and [plan_phase_2.md](plan_phase_2.md) for what's deliberately not built yet.
+See [IMPLEMENTATION.md](IMPLEMENTATION.md) for the full design rationale and [plan_phase_2.md](plan_phase_2.md)
+for what's still deliberately not built (continuous evaluation / model-drift monitoring — the multi-agent
+split it also proposed is now built and described below).
 
 ## Architecture
 
 Three independent services, each its own process/port — `backend` never imports `mcp_server`'s tool code,
-it only ever talks to it over HTTP as an MCP client, the way it would talk to a real internal data API:
+it only ever talks to it over HTTP as an MCP client, the way it would talk to a real internal data API.
+`backend` itself is a 5-agent LangGraph `StateGraph`, not a single agent: an Orchestration Agent reads the
+question and routes it to whichever of 3 domain specialists are relevant (in parallel), and a Recommendation
+Agent always runs last, reading the specialists' condensed findings plus its own tools:
 
 ```mermaid
 flowchart TB
     subgraph FE["frontend :5173  (React + Vite + Tailwind)"]
-        UI["Sidebar · ChatWindow · ActivityPanel"]
+        UI["Sidebar · ChatWindow · ActivityPanel<br/>(live trace grouped per agent, Agents catalog, Tool catalog)"]
     end
 
-    subgraph BE["backend :8000  (FastAPI + LangGraph)"]
-        Agent["create_react_agent<br/>(skills/*.md → system prompt)"]
+    subgraph BE["backend :8000  (FastAPI + LangGraph StateGraph)"]
+        direction TB
+        O["Orchestrator<br/>orchestrate_flow.md · no tools"]
+        M["Market Intelligence Agent"]
+        C["Claims Analysis Agent"]
+        V["Conversion Analysis Agent"]
+        R["Recommendation Agent<br/>always runs"]
+        O -->|"Send: subset of routing"| M
+        O -->|Send| C
+        O -->|Send| V
+        O -.->|"Send (routing = [])<br/>straight to recommend"| R
+        M --> R
+        C --> R
+        V --> R
     end
 
     subgraph MCP["mcp_server :8001  (FastMCP, streamable-http)"]
@@ -35,6 +52,7 @@ flowchart TB
             j2[get_previous_pricing_actions]
             j3[get_customer_feedback_metrics]
             j4[list_market_intelligence]
+            j5[list_demo_scenarios]
         end
         subgraph catFile["direct file"]
             f1[get_market_intelligence_doc]
@@ -59,9 +77,9 @@ flowchart TB
     Chroma[("store/chroma/")]
     Ollama[("Ollama<br/>gpt-oss:120b-cloud +<br/>nomic-embed-text")]
 
-    UI <-->|"POST /chat (SSE)"| Agent
-    Agent <-->|"MCP over HTTP"| catJSON & catFile & catSQL & catVec & catMath
-    Agent <-->|chat completions| Ollama
+    UI <-->|"POST /chat (SSE)"| O
+    M & C & V & R <-->|"MCP over HTTP<br/>(each agent's own scoped tool subset)"| catJSON & catFile & catSQL & catVec & catMath
+    O & M & C & V & R <-->|chat completions| Ollama
     catJSON --> JSONFiles
     catFile --> JSONFiles
     catSQL --> SQLite
@@ -78,34 +96,118 @@ same interface discipline you'd get talking to someone else's service: `backend`
 MCP tool contracts expose, never reach into SQLite or the JSON files directly. That's also what makes the
 tool catalog in `mcp_server/` swappable later for a real Aviva API without `backend` changing at all.
 
+**Why 5 agents instead of 1:** `challenge.md` names four specialist roles as a bonus ask (Market
+Intelligence, Claims, Conversion, Recommendation); a 5th Orchestration Agent sits above them purely to
+route. Each specialist gets only its own skill subset and its own MCP tool subset — `backend/graph.py`'s
+`SPECIALISTS` dict is the single source of truth for this scoping. This is a genuine architectural split,
+not cosmetic: each specialist runs as its own `create_react_agent` instance with its own private message
+history (its tool-call back-and-forth is never shared with the other agents), and only a single condensed
+findings string crosses back into the shared graph state per agent — see "State management" below.
+
 ## Request flow
 
 ```mermaid
 sequenceDiagram
     participant U as Analyst (browser)
     participant F as frontend
-    participant B as backend
+    participant O as Orchestrator
+    participant S as Specialists (Market/Claims/Conversion)
+    participant R as Recommendation Agent
     participant M as mcp_server
-    participant O as Ollama
+    participant L as Ollama
 
     U->>F: Ask a pricing question
-    F->>B: POST /chat
-    B->>O: system prompt (skills/*.md) + question
-    O-->>B: tool call (e.g. get_claims_performance)
-    B->>M: MCP tool call over HTTP
-    M-->>B: compact, pre-filtered JSON
-    B-->>F: SSE: tool_call / tool_result
-    B->>O: tool result appended to context
-    O-->>B: more tool calls, then final JSON answer
-    B-->>F: SSE: final_answer (structured PricingAnalysis)
-    F-->>U: renders trace cards + answer cards
+    F->>O: POST /chat
+    O->>L: orchestrate_flow.md + question (no tools)
+    L-->>O: routing decision, e.g. ["claims","conversion","market"]
+    F-->>U: SSE: routing (which agents were picked)
+
+    par one Send per routed domain
+        O->>S: query (private per-agent state)
+        S->>L: own skill subset + question
+        L-->>S: tool call
+        S->>M: MCP tool call (own scoped tool subset)
+        M-->>S: compact, pre-filtered JSON
+        F-->>U: SSE: tool_call / tool_result (tagged agent: market/claims/conversion)
+        S->>L: tool result appended to its own private history
+        L-->>S: condensed findings (one string)
+    end
+
+    S-->>R: condensed findings only (not raw tool-call payloads)
+    R->>L: recommend_pricing_actions.md + explain_reasoning.md + findings
+    L-->>R: tool call (its own tools, e.g. get_customer_feedback_metrics)
+    R->>M: MCP tool call
+    M-->>R: compact JSON
+    F-->>U: SSE: tool_call / tool_result (tagged agent: recommend)
+    R->>L: final turn
+    L-->>R: PricingAnalysis JSON
+    F-->>U: SSE: final_answer
 ```
 
-**Why SSE and not a single request/response:** the agent can take several tool round-trips to answer one
-question, and the frontend's activity panel is meant to show that reasoning live (which tool, what args,
-what came back) rather than only the final card once everything finishes. A plain JSON response would force
-the frontend to wait in silence for however many tool calls the ReAct loop makes; streaming each
-`tool_call`/`tool_result` event as it happens is what makes the trace panel meaningful instead of decorative.
+**Why SSE and not a single request/response:** the graph can take several parallel tool round-trips across
+multiple agents to answer one question, and the frontend's activity panel is meant to show that live
+(routing decision, which agent is calling which tool, what came back) rather than only the final card once
+everything finishes. A plain JSON response would force the frontend to wait in silence; streaming each
+`routing`/`tool_call`/`tool_result` event as it happens, tagged with which agent produced it, is what makes
+the trace panel a genuine multi-agent trace instead of a single undifferentiated list.
+
+**How live per-tool streaming survives agent-private state**: each specialist's own tool-call loop runs
+inside `backend/graph.py`'s `_run_specialist` helper, which calls `langgraph.config.get_stream_writer()` to
+push `tool_call`/`tool_result` events directly into the outer graph's stream as they happen — this happens
+*before* the specialist's private message history is collapsed into its one condensed findings string, so
+the frontend still sees every individual tool call from every concurrently-running specialist, tagged with
+`agent`, even though none of that detail ever enters the shared graph state.
+
+## State management
+
+Each agent gets only the context relevant to its own job — this is deliberate, not an accident of the
+`Send` API. `backend/graph.py`'s `GraphState`:
+
+```python
+class GraphState(TypedDict):
+    query: str
+    routing: list[str]                 # orchestrator's decision, subset of ["market","claims","conversion"]
+    market_findings: str | None        # written only by the Market Intelligence Agent
+    claims_findings: str | None        # written only by the Claims Analysis Agent
+    conversion_findings: str | None    # written only by the Conversion Analysis Agent
+    final_answer: dict | None          # written only by the Recommendation Agent
+```
+
+Two different lifetimes matter here:
+
+- **A specialist's own tool-call scratchpad** (the back-and-forth of calling `get_claims_performance`,
+  reading the result, calling `calculate_trend`, etc.) lives only in that specialist's own private
+  `create_react_agent` message list — it is never written into `GraphState`. Only that agent's single final
+  condensed-findings string crosses back into the shared state, written to its own dedicated field. This is
+  what keeps each specialist's context scoped to its own job: the Recommendation Agent never sees the
+  Claims Analysis Agent's raw tool calls, only its distilled conclusion.
+- **`GraphState` itself is rebuilt fresh for every question.** `backend/agent.py`'s `stream_query` constructs
+  a brand-new `GraphState` (all fields empty) per `POST /chat` call — there's no cross-turn persistence yet,
+  so a specialist that the orchestrator doesn't route to for this question simply never has its field
+  written, no explicit clearing required. (A future multi-turn/session-memory feature would need an explicit
+  per-turn reset of the 4 answer-shaped fields while keeping a running message history for follow-ups — see
+  `plan_phase_2.md` §2 for that design, not yet built.)
+
+**Routing when no specialist applies**: `route_to_specialists` special-cases an empty routing decision — a
+question that's purely about customer feedback or prior pricing actions (both are the Recommendation
+Agent's own tool scope, not any specialist's), or a meta-question about the copilot itself ("what can you
+do," "give me example scenarios") — by `Send`-ing straight to `recommend`, so no specialist runs needlessly
+and the graph doesn't stall waiting for branches that were never dispatched. For meta-questions, the
+Recommendation Agent answers via its `describe_capabilities` skill and the `list_demo_scenarios` tool
+instead of trying to force a pricing recommendation — see `IMPLEMENTATION.md` §5.
+
+## Getting a routing decision out of the model reliably
+
+`backend/graph.py`'s `orchestrate_node` needs the LLM to return a small structured decision (which of 3
+domains apply). The obvious approach — `get_llm().with_structured_output(RoutingDecision)` — does not work
+reliably against `gpt-oss:120b-cloud` via Ollama: its default `json_schema` method returned plain prose
+instead of JSON, and `function_calling` method skipped the tool call entirely (returned `content='[]'` with
+an empty `tool_calls` list). This is the same failure mode already documented in
+[IMPLEMENTATION.md](IMPLEMENTATION.md) §6 for the final `PricingAnalysis` output — and it's fixed the same
+way: a plain `ainvoke` call with `PydanticOutputParser.get_format_instructions()` appended to the prompt as
+plain text, parsed client-side, with a defensive fallback (route to all 3 domains) only if parsing itself
+fails — never for a legitimate empty decision, which parses to `{"agents": []}` correctly. Verified
+end-to-end via `backend/run_cli.py` for both a multi-domain question and a customer-feedback-only question.
 
 ## Data retrieval design
 
@@ -138,100 +240,40 @@ structured fields, and a typed filter never has to fuzzy-match prose.
 
 See [IMPLEMENTATION.md](IMPLEMENTATION.md) §2 for the full source-by-source rationale.
 
-## What goes into the LLM's context
+## What goes into each agent's context
 
-Every `POST /chat` call sends Ollama a context built from two independent pieces — a **fixed system
-prompt** (the same on every request, regardless of what's asked) and a **growing conversation** (unique to
-this request, built turn-by-turn as the ReAct loop runs):
+Every agent's system prompt is built from `backend/skill_loader.py`'s `build_system_prompt(skill_names)`,
+which concatenates whichever `skills/*.md` files it's given — but which files (and which MCP tools) each
+agent gets is now genuinely different per agent, not a single fixed bundle for the whole system:
 
-```mermaid
-flowchart TB
-    subgraph SP["System prompt — fixed, ~24 KB / ~6k tokens, same for every question"]
-        direction TB
-        MO[master_orchestrator.md<br/>tool inventory + workflow + hard constraints]
-        S1[retrieve_information.md]
-        S2[summarise_findings.md]
-        S3[highlight_trends.md]
-        S4[identify_investigation_areas.md]
-        S5[recommend_pricing_actions.md]
-        S6[explain_reasoning.md]
-        FMT[PricingAnalysis format instructions<br/>Pydantic schema → JSON shape]
-    end
+| Agent | Skills | Tools |
+|---|---|---|
+| Orchestrator | `orchestrate_flow` only | none — it only decides routing |
+| Market Intelligence | `retrieve_information`, `summarise_findings`, `highlight_trends` | `list_market_intelligence`, `get_market_intelligence_doc`, `search_unstructured_sources` |
+| Claims Analysis | `retrieve_information`, `highlight_trends`, `identify_investigation_areas` | `get_claims_performance`, `get_regional_weather_claims`, `calculate_trend`, `calculate_summary_stats` |
+| Conversion Analysis | `retrieve_information`, `highlight_trends` | `get_conversion_performance`, `get_competitor_information`, `calculate_percentage_change` |
+| Recommendation | `recommend_pricing_actions`, `explain_reasoning`, `describe_capabilities` | `get_previous_pricing_actions`, `search_unstructured_sources`, `get_customer_feedback_metrics`, `list_demo_scenarios` |
 
-    subgraph CV["Conversation — grows with every tool round-trip, this request only"]
-        direction TB
-        Q["HumanMessage: the analyst's question"]
-        TC1["AIMessage: tool_call #1"]
-        TR1["ToolMessage: tool_result #1 (compact JSON)"]
-        TC2["AIMessage: tool_call #2"]
-        TR2["ToolMessage: tool_result #2"]
-        TCn["... repeats until the model has enough ..."]
-        FA["AIMessage: final PricingAnalysis JSON"]
-    end
+This is the direct payoff of a design choice made even in the original single-agent phase: `skill_loader.py`
+was written to accept a subset of skill names from day one (not a hardcoded constant), specifically so this
+split wouldn't require touching that file — see `IMPLEMENTATION.md` §5. Each specialist's own
+`create_react_agent` is built once and cached per agent name (`backend/graph.py`'s `_get_specialist_agent`),
+so there are 4 independent MCP client connections into `mcp_server` (one per specialist bucket, plus the
+Recommendation Agent), each bound to only its own tool subset — narrower than any single request needs, by
+design, rather than the previous phase's "fetch and bind all 12 tools regardless of question shape."
 
-    SP -->|"prepended once per request<br/>(backend/agent.py build_agent)"| CV
-```
-
-Concretely, from `backend/agent.py` and `backend/skill_loader.py`:
-
-- `build_system_prompt()` concatenates **all 7** `skills/*.md` files, unconditionally, every time —
-  `ALL_SKILLS` is passed as the default and nothing in Phase 1 ever calls it with a subset.
-- `_output_parser.get_format_instructions()` appends the full `PricingAnalysis` JSON-schema description on
-  top of that.
-- `create_react_agent`'s own loop then keeps **every** tool call and **every** tool result in the message
-  list for the rest of that request — nothing is dropped or summarised mid-conversation, so a question that
-  takes 6 tool calls to answer is paying for all 6 results' worth of tokens by the time the model writes the
-  final answer, even if the first 2 turned out to be dead ends.
-
-Why it's built this way for Phase 1: a single `create_react_agent` needs one system prompt, and having
-`build_system_prompt` already accept a `skill_names` subset (not just hardcode the concatenation) was a
-deliberate seam left for Phase 2's multi-agent split, not something this phase exercises — see
-`plan_phase_2.md` and `IMPLEMENTATION.md` §5. Reaching for that complexity now, before Phase 1's simpler
-single-agent design was proven, would have been solving a scaling problem before confirming there was one.
-
-## Making context query-specific
-
-The two pieces above are also the two places to cut context that isn't relevant to a given question:
-
-**1. Route to a subset of skills instead of all 7.** `build_system_prompt(skill_names)` already supports
-this — it just isn't called that way yet. A cheap classification step (either a fast/small LLM call, or
-even keyword matching against each skill's "when to use it" section) could pick, say, only
-`retrieve_information` + `highlight_trends` for "how has young driver loss ratio moved this year," skipping
-`recommend_pricing_actions` and `explain_reasoning` entirely when the question never asks for a
-recommendation. This is the single biggest lever: `master_orchestrator.md` (6.3 KB) is unavoidable since it
-carries the tool inventory and hard constraints, but the other 6 skills are ~2.5–3.8 KB each and most
-questions only need one or two of them.
-
-**2. Narrow which of the 12 tools are bound to the agent per request.** `mcp_client.get_mcp_tools()`
-currently fetches and binds all 12 tools regardless of question shape. If skill routing picks
-`retrieve_information` + `highlight_trends` only, the agent only needs the SQL/JSON/vector tools plus the
-math tools — not `recommend_pricing_actions`' or `explain_reasoning`'s tools (there's no such split today
-since it's one skill = one prompt section, not one skill = one tool subset, but that mapping already exists
-implicitly in which tools each skill file tells the agent to call).
-
-**3. Trim stale tool results out of the running conversation.** Right now a tool result that turned out
-irrelevant (e.g. the agent queried `get_claims_performance` for the wrong segment, got empty rows, and
-re-queried) stays in the message list for the rest of the request. A summarization/pruning step between
-ReAct iterations — collapsing old `ToolMessage`s into a short textual note once their data has been folded
-into the model's reasoning — would keep the context flat rather than monotonically growing across a long
-tool-calling chain.
-
-**4. Cache the fixed part.** Since the system prompt is identical across requests (until skill routing makes
-it request-dependent), Ollama-side prompt caching means the ~6k fixed tokens are only fully re-processed
-once per distinct skill-subset combination, not once per request — worth confirming this is actually
-enabled/effective for the chosen model rather than assumed.
-
-None of this is built yet — Phase 1 optimizes for correctness and traceability (every tool call is visible
-in the activity panel) over token efficiency, and the unconditional `ALL_SKILLS` + all-12-tools setup is
-simple to reason about and debug. It's the natural next optimization once the always-all-skills prompt
-becomes a real latency/cost problem rather than a theoretical one.
+The upside beyond token efficiency: a specialist literally cannot call a tool outside its scope — if the
+model tries anyway (observed once during testing: the Market Intelligence Agent attempted
+`get_claims_performance`), the `ToolNode` inside its own `create_react_agent` rejects it with a clear "not a
+valid tool, try one of [...]" error rather than silently succeeding, and the specialist recovers using its
+actual tools. Scoping is enforced structurally, not just by prompt instruction.
 
 ## Tech stack
 
 | Concern | Choice |
 |---|---|
 | MCP server | Python, FastMCP, streamable-http transport |
-| Backend | Python, FastAPI, LangGraph, langchain-mcp-adapters |
+| Backend | Python, FastAPI, LangGraph (`StateGraph` + `create_react_agent` per agent), langchain-mcp-adapters |
 | LLM | Ollama (`gpt-oss:120b-cloud` chat, `nomic-embed-text` embeddings) |
 | Structured data | SQLite (typed queries only) |
 | Unstructured data | Chroma vector store |
@@ -267,3 +309,15 @@ cd frontend && npm install && npm run dev
 
 Requires [Ollama](https://ollama.com) running locally with `gpt-oss:120b-cloud` (or a local model of your
 choice — see `.env.example`) and `nomic-embed-text` pulled.
+
+Quick smoke test without the frontend/HTTP layer, showing the full multi-agent trace in a terminal:
+
+```bash
+uv run backend/run_cli.py "why is young driver loss ratio worsening?"
+```
+
+## Folder READMEs
+
+Each major folder has its own `README.md` with more detail than fits here: [`mcp_server/`](mcp_server/README.md),
+[`backend/`](backend/README.md), [`frontend/`](frontend/README.md), [`skills/`](skills/README.md),
+[`data/`](data/README.md), [`store/`](store/README.md).
