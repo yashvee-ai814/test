@@ -1,17 +1,6 @@
-"""Typed SQLite query tools - the only way this server touches the database.
-No raw-SQL tool is exposed: every query is a parametrized, named function so
-the tool surface stays self-documenting and injection-proof by construction.
-"""
-
 import sqlite3
 
 from paths import DB_PATH
-
-SEGMENTS = ("Young Driver (17-25)", "Standard (26-45)", "Experienced (46-65)", "Senior (66+)")
-PRODUCT_LINE = "Private Car Motor - Comprehensive"
-CHANNELS = ("Price Comparison Website", "Direct (Aviva.co.uk)", "Broker")
-REGIONS = ("London & South East", "Midlands", "North of England", "Scotland & NI", "Wales & South West")
-PERIOD_RANGE = ("2025-07", "2026-06")
 
 
 def _query(sql: str, params: dict) -> list[dict]:
@@ -27,11 +16,6 @@ def _query(sql: str, params: dict) -> list[dict]:
 def _filtered_query(
     table: str, equals: dict[str, str | None], period_from: str | None, period_to: str | None
 ) -> list[dict]:
-    """Builds `SELECT * FROM <table> WHERE ...` with equality filters plus an
-    optional period range, all bound via named params. `table` and the keys
-    of `equals` are always hardcoded call-site literals, never tool input, so
-    interpolating them into the SQL text is safe - every *value* is bound.
-    """
     sql = f"SELECT * FROM {table} WHERE 1=1"
     params: dict = {}
     for column, value in equals.items():

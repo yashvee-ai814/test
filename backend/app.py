@@ -1,10 +1,9 @@
-"""FastAPI backend microservice - runs the LangGraph orchestrator agent and
-streams its progress to the frontend over Server-Sent Events.
-
-Run with: uv run uvicorn app:app --app-dir backend --port 8000
-"""
-
 import json
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,6 +11,7 @@ from pydantic import BaseModel
 from sse_starlette.sse import EventSourceResponse
 
 from agent import stream_query
+from dashboard import get_dashboard_data
 
 app = FastAPI(title="Pricing Analyst Copilot Agent API")
 
@@ -32,13 +32,15 @@ async def health():
     return {"status": "ok"}
 
 
+@app.get("/dashboard")
+async def dashboard():
+    return await get_dashboard_data()
+
+
 @app.post("/chat")
 async def chat(request: ChatRequest):
     async def event_stream():
         async for event in stream_query(request.question):
             yield {"event": event["type"], "data": json.dumps(event)}
 
-    # sep="\n" keeps frames terminated with a plain blank line, matching the
-    # simple split("\n\n") parser on the frontend (sse-starlette's default
-    # "\r\n" separator would never match that split).
     return EventSourceResponse(event_stream(), sep="\n")

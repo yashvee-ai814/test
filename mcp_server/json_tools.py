@@ -1,8 +1,3 @@
-"""Direct-JSON query tools: small, predictably-shaped sources that don't need a
-database - load once at import time, filter in-memory, return only matching
-records (never the whole file).
-"""
-
 import json
 
 from paths import DATA_DIR

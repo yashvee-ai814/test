@@ -1970,6 +1970,7 @@ dependencies = [
     { name = "langchain-ollama" },
     { name = "langgraph" },
     { name = "mcp" },
+    { name = "python-dotenv" },
     { name = "sse-starlette" },
     { name = "uvicorn", extra = ["standard"] },
 ]
@@ -1985,6 +1986,7 @@ requires-dist = [
     { name = "langchain-ollama", specifier = ">=1.1.0" },
     { name = "langgraph", specifier = ">=1.2.9" },
     { name = "mcp", specifier = ">=1.28.1" },
+    { name = "python-dotenv", specifier = ">=1.2.2" },
     { name = "sse-starlette", specifier = ">=3.4.6" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.51.0" },
 ]

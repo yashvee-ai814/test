@@ -1,26 +1,18 @@
-"""One-off loader: embeds the 3 genuinely free-text sources into a single Chroma
-collection, tagged with a `source` metadata field so the MCP search tool can
-filter by source when needed.
-
-Run with: uv run mcp_server/build_vector_index.py
-
-Sources embedded (one chunk per item - each is already short):
-  - unstructured_market_intelligence/*.md   (18 raw market intel documents)
-  - customer_feedback.json verbatim_comments (10 comments)
-  - previous_pricing_actions.json rationale  (10 free-text rationales)
-"""
-
 import json
+import os
 import shutil
 
+from dotenv import load_dotenv
 from langchain_chroma import Chroma
 from langchain_core.documents import Document
 from langchain_ollama import OllamaEmbeddings
 
 from paths import CHROMA_DIR, DATA_DIR, ROOT, STORE_DIR
 
+load_dotenv(ROOT / ".env")
+
 COLLECTION_NAME = "unstructured_sources"
-EMBEDDING_MODEL = "nomic-embed-text"
+EMBEDDING_MODEL = os.environ.get("OLLAMA_EMBED_MODEL", "nomic-embed-text")
 
 
 def load_json(name: str) -> dict:
@@ -88,11 +80,7 @@ def build() -> None:
         shutil.rmtree(CHROMA_DIR)
     STORE_DIR.mkdir(exist_ok=True)
 
-    documents = (
-        market_intelligence_documents()
-        + customer_feedback_documents()
-        + pricing_action_documents()
-    )
+    documents = market_intelligence_documents() + customer_feedback_documents() + pricing_action_documents()
 
     embeddings = OllamaEmbeddings(model=EMBEDDING_MODEL)
     store = Chroma(

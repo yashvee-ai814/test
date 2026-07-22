@@ -1,9 +1,3 @@
-"""Connects to the MCP server (mcp_server/server.py) as an HTTP client and
-exposes its 12 tools as LangChain tools - the backend never imports the tool
-implementations directly, it only talks to the MCP server over the network,
-same as it would talk to a real internal data API.
-"""
-
 import os
 
 from langchain_mcp_adapters.client import MultiServerMCPClient

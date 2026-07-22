@@ -35,3 +35,46 @@ body {
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+/* Dataviz palette (see dataviz skill's references/palette.md) - the
+   validated default categorical order + chrome/ink roles, light and dark.
+   Scoped to .dark (our ThemeContext toggles that class on <html>) rather
+   than the skill's [data-theme] convention, to match this app's existing
+   theme mechanism. */
+:root {
+  --viz-surface: #fcfcfb;
+  --viz-ink-primary: #0b0b0b;
+  --viz-ink-secondary: #52514e;
+  --viz-ink-muted: #898781;
+  --viz-grid: #e1e0d9;
+  --viz-axis: #c3c2b7;
+  --viz-good: #006300;
+
+  --viz-series-1: #2a78d6; /* blue */
+  --viz-series-2: #008300; /* green */
+  --viz-series-3: #e87ba4; /* magenta */
+  --viz-series-4: #eda100; /* yellow */
+  --viz-series-5: #1baf7a; /* aqua */
+  --viz-series-6: #eb6834; /* orange */
+  --viz-series-7: #4a3aa7; /* violet */
+  --viz-series-8: #e34948; /* red */
+}
+
+.dark {
+  --viz-surface: #1a1a19;
+  --viz-ink-primary: #ffffff;
+  --viz-ink-secondary: #c3c2b7;
+  --viz-ink-muted: #898781;
+  --viz-grid: #2c2c2a;
+  --viz-axis: #383835;
+  --viz-good: #0ca30c;
+
+  --viz-series-1: #3987e5;
+  --viz-series-2: #008300;
+  --viz-series-3: #d55181;
+  --viz-series-4: #c98500;
+  --viz-series-5: #199e70;
+  --viz-series-6: #d95926;
+  --viz-series-7: #9085e9;
+  --viz-series-8: #e66767;
+}

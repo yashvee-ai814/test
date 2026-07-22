@@ -13,3 +13,6 @@ wheels/
 store/
 .DS_Store
 .claude/scheduled_tasks.lock
+
+# Local environment overrides (copied from .env.example)
+.env

@@ -65,23 +65,94 @@ const TOOL_CATALOG: { category: string; label: string; tools: { name: string; de
   },
 ];
 
-function TraceCard({ call }: { call: TraceCall }) {
-  const [open, setOpen] = useState(false);
+function unwrapToolResult(result: unknown): unknown {
+  if (Array.isArray(result) && result.length > 0 && typeof result[0] === "object" && result[0] !== null) {
+    const block = result[0] as Record<string, unknown>;
+    if (typeof block.text === "string") {
+      try {
+        return JSON.parse(block.text);
+      } catch {
+        return block.text;
+      }
+    }
+  }
+  return result;
+}
+
+function highlightJson(value: unknown): string {
+  const json = JSON.stringify(value, null, 2)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+  return json.replace(
+    /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?)/g,
+    (match) => {
+      let cls = "text-sky-600 dark:text-sky-400";
+      if (/^"/.test(match)) {
+        cls = /:$/.test(match)
+          ? "text-violet-600 dark:text-violet-400"
+          : "text-emerald-600 dark:text-emerald-400";
+      } else if (/true|false/.test(match)) {
+        cls = "text-amber-600 dark:text-amber-400";
+      } else if (/null/.test(match)) {
+        cls = "text-slate-400";
+      }
+      return `<span class="${cls}">${match}</span>`;
+    },
+  );
+}
+
+function JsonBlock({ value }: { value: unknown }) {
   return (
-    <div className={`rounded-lg border border-slate-200 border-l-4 bg-slate-50 p-2.5 text-xs dark:border-slate-700 dark:bg-slate-800/60 ${CATEGORY_STYLE[call.category]}`}>
+    <pre
+      className="max-h-72 overflow-auto whitespace-pre-wrap break-words rounded-md bg-slate-100 p-2 font-mono text-[11px] leading-relaxed dark:bg-slate-900"
+      dangerouslySetInnerHTML={{ __html: highlightJson(value) }}
+    />
+  );
+}
+
+function TraceCard({ call }: { call: TraceCall }) {
+  const [open, setOpen] = useState(true);
+  const hasArgs = call.args && Object.keys(call.args).length > 0;
+
+  return (
+    <div
+      className={`rounded-lg border border-slate-200 border-l-4 bg-slate-50 p-2.5 text-xs dark:border-slate-700 dark:bg-slate-800/60 ${CATEGORY_STYLE[call.category]}`}
+    >
       <button type="button" onClick={() => setOpen((o) => !o)} className="flex w-full items-center gap-2 text-left">
-        <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase text-white ${CATEGORY_BADGE[call.category]}`}>
+        <span
+          className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase text-white ${CATEGORY_BADGE[call.category]}`}
+        >
           {call.category}
         </span>
         <code className="flex-1 truncate font-mono text-slate-700 dark:text-slate-200">{call.tool}</code>
-        {call.result === undefined && <span className="text-amber-600 dark:text-amber-400">running…</span>}
+        {call.result === undefined ? (
+          <span className="text-amber-600 dark:text-amber-400">running…</span>
+        ) : (
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            className={`h-3.5 w-3.5 shrink-0 text-slate-400 transition-transform ${open ? "rotate-180" : ""}`}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 9l6 6 6-6" />
+          </svg>
+        )}
       </button>
+
       {open && (
-        <div className="mt-2 space-y-1 font-mono text-[11px] text-slate-500 dark:text-slate-400">
-          <div className="break-words">args: {JSON.stringify(call.args)}</div>
+        <div className="mt-2 flex flex-col gap-2">
+          {hasArgs && (
+            <div>
+              <div className="mb-1 font-semibold uppercase tracking-wide text-slate-400">Arguments</div>
+              <JsonBlock value={call.args} />
+            </div>
+          )}
           {call.result !== undefined && (
-            <div className="break-words text-emerald-700 dark:text-emerald-400">
-              result: {JSON.stringify(call.result).slice(0, 300)}…
+            <div>
+              <div className="mb-1 font-semibold uppercase tracking-wide text-slate-400">Result</div>
+              <JsonBlock value={unwrapToolResult(call.result)} />
             </div>
           )}
         </div>
@@ -95,7 +166,7 @@ function TraceTab({ trace }: { trace: TraceCall[] }) {
     return <p className="px-1 text-sm text-slate-400">Ask a question to see the retrieval trace here.</p>;
   }
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-2">
       {trace.map((call) => (
         <TraceCard key={call.id} call={call} />
       ))}
@@ -128,11 +199,14 @@ function CatalogTab() {
   );
 }
 
-export function ActivityPanel({ trace }: { trace: TraceCall[] }) {
+export function ActivityPanel({ trace, width }: { trace: TraceCall[]; width: number }) {
   const [tab, setTab] = useState<"trace" | "catalog">("trace");
 
   return (
-    <aside className="flex w-72 shrink-0 flex-col border-l border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900/40">
+    <aside
+      style={{ width }}
+      className="flex shrink-0 flex-col overflow-hidden border-l border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900/40"
+    >
       <div className="flex border-b border-slate-200 dark:border-slate-800">
         {(["trace", "catalog"] as const).map((t) => (
           <button

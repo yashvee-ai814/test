@@ -1,8 +1,3 @@
-"""Chat model configuration - Ollama-backed, model overridable via env var so
-the same code runs against a fully local model instead of the pulled
-gpt-oss:120b-cloud default without any code changes.
-"""
-
 import os
 
 from langchain_ollama import ChatOllama

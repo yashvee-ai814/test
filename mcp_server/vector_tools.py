@@ -1,9 +1,4 @@
-"""Vector DB semantic search - the retrieval technique for genuinely
-unstructured/free-text content whose query shapes can't be anticipated by a
-fixed filter: market intelligence articles, customer feedback comments, and
-previous pricing action rationales (see build_vector_index.py for indexing).
-"""
-
+import os
 from typing import Literal
 
 from langchain_chroma import Chroma
@@ -11,7 +6,7 @@ from langchain_ollama import OllamaEmbeddings
 
 from paths import CHROMA_DIR
 
-_EMBEDDING_MODEL = "nomic-embed-text"
+_EMBEDDING_MODEL = os.environ.get("OLLAMA_EMBED_MODEL", "nomic-embed-text")
 _COLLECTION_NAME = "unstructured_sources"
 
 _store = Chroma(
@@ -36,11 +31,7 @@ def search_unstructured_sources(query: str, source: Source | None = None, top_k:
     return {
         "count": len(hits),
         "results": [
-            {
-                "score": round(score, 4),
-                "excerpt": doc.page_content[:280],
-                "metadata": doc.metadata,
-            }
+            {"score": round(score, 4), "excerpt": doc.page_content[:280], "metadata": doc.metadata}
             for doc, score in hits
         ],
     }

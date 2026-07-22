@@ -16,7 +16,10 @@ agent.py            Builds the LangGraph agent (cached per process) and streams 
                      tags each tool call with a retrieval-technique category; retries a whole
                      turn on a transient Ollama-cloud error; parses the final turn's JSON into
                      PricingAnalysis
-app.py              FastAPI app: POST /chat (SSE), GET /health
+dashboard.py         Direct (non-agent) data reads for the dashboard view - calls the same
+                      MCP tools, bypassing the LLM entirely, for a fast deterministic view
+                      of the raw underlying data
+app.py              FastAPI app: POST /chat (SSE), GET /health, GET /dashboard
 run_cli.py           Dev/test script - runs the agent directly, no HTTP, for quick verification
 ```
 
@@ -39,6 +42,12 @@ run_cli.py           Dev/test script - runs the agent directly, no HTTP, for qui
 Request: `{"question": string}`. Response: `text/event-stream`, one `AgentEvent` per SSE frame — see
 `frontend/README.md` for the full event-type table, or `agent.py`'s `stream_query` docstring for the
 authoritative shape.
+
+### `GET /dashboard`
+No request body. Returns a single JSON payload (KPI stats, claims/conversion trends, a competitor
+premium snapshot, feedback trend, market-intelligence sentiment breakdown, and the pricing-actions list)
+straight from the MCP tools — no LLM call, so it's fast and always the same shape. Powers the frontend's
+Dashboard view (`frontend/src/components/dashboard/`).
 
 ## Run
 

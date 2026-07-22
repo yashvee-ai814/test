@@ -1,12 +1,3 @@
-"""Reads the skills/*.md files and assembles the agent's system prompt.
-
-For this phase (single orchestrator agent) all 7 skills are concatenated into
-one prompt, master orchestrator first since it sets the overall workflow and
-tool inventory the other skills assume. Structured as a function (not a
-module-level constant) so a future multi-agent split can call it per-agent
-with a subset of skill names instead.
-"""
-
 from pathlib import Path
 
 SKILLS_DIR = Path(__file__).resolve().parent.parent / "skills"

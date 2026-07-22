@@ -22,7 +22,12 @@ function useBackendHealth() {
   return online;
 }
 
-export function Header() {
+type HeaderProps = {
+  view: "chat" | "dashboard";
+  onViewChange: (view: "chat" | "dashboard") => void;
+};
+
+export function Header({ view, onViewChange }: HeaderProps) {
   const { theme, toggleTheme } = useTheme();
   const online = useBackendHealth();
 
@@ -35,6 +40,31 @@ export function Header() {
       </div>
 
       <div className="flex items-center gap-3">
+        <div className="flex rounded-full border border-slate-200 p-0.5 dark:border-slate-700">
+          <button
+            type="button"
+            onClick={() => onViewChange("chat")}
+            className={`rounded-full px-3 py-1 text-xs font-medium ${
+              view === "chat"
+                ? "bg-brand-600 text-white"
+                : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+            }`}
+          >
+            Copilot
+          </button>
+          <button
+            type="button"
+            onClick={() => onViewChange("dashboard")}
+            className={`rounded-full px-3 py-1 text-xs font-medium ${
+              view === "dashboard"
+                ? "bg-brand-600 text-white"
+                : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+            }`}
+          >
+            Dashboard
+          </button>
+        </div>
+
         <span
           className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
             online

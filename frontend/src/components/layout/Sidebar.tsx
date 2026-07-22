@@ -8,11 +8,15 @@ type SidebarProps = {
   activeId: string | null;
   onSelect: (id: string) => void;
   onNewQuestion: () => void;
+  width: number;
 };
 
-export function Sidebar({ turns, activeId, onSelect, onNewQuestion }: SidebarProps) {
+export function Sidebar({ turns, activeId, onSelect, onNewQuestion, width }: SidebarProps) {
   return (
-    <aside className="flex w-64 shrink-0 flex-col border-r border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900/40">
+    <aside
+      style={{ width }}
+      className="flex shrink-0 flex-col overflow-hidden border-r border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900/40"
+    >
       <div className="flex items-center gap-2 px-4 py-4">
         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 text-sm font-bold text-white">
           PA

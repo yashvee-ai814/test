@@ -8,6 +8,9 @@ import { WelcomeScreen } from "./components/chat/WelcomeScreen";
 import { ChatWindow } from "./components/chat/ChatWindow";
 import { ChatInput } from "./components/chat/ChatInput";
 import { ActivityPanel } from "./components/trace/ActivityPanel";
+import { Dashboard } from "./components/dashboard/Dashboard";
+import { ResizeHandle } from "./components/layout/ResizeHandle";
+import { useResizable } from "./hooks/useResizable";
 
 function newTurn(question: string): Turn {
   return {
@@ -21,10 +24,13 @@ function newTurn(question: string): Turn {
 }
 
 function AppShell() {
+  const [view, setView] = useState<"chat" | "dashboard">("chat");
   const [turns, setTurns] = useState<Turn[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const sidebar = useResizable(256, 180, 480);
+  const activityPanel = useResizable(320, 260, 640);
 
   const isRunning = turns.some((t) => t.isRunning);
   const activeTurn = turns.find((t) => t.id === activeId) ?? turns[turns.length - 1];
@@ -91,26 +97,33 @@ function AppShell() {
 
   return (
     <div className="flex h-screen flex-col bg-slate-50 dark:bg-[linear-gradient(160deg,_#0a0f1a_0%,_#1a0f14_45%,_#0a0f1a_100%)]">
-      <Header />
-      <div className="flex flex-1 overflow-hidden">
-        <Sidebar
-          turns={turns.map((t) => ({ id: t.id, question: t.question }))}
-          activeId={activeId}
-          onSelect={setActiveId}
-          onNewQuestion={() => inputRef.current?.focus()}
-        />
+      <Header view={view} onViewChange={setView} />
+      {view === "dashboard" ? (
+        <Dashboard />
+      ) : (
+        <div className="flex flex-1 overflow-hidden">
+          <Sidebar
+            turns={turns.map((t) => ({ id: t.id, question: t.question }))}
+            activeId={activeId}
+            onSelect={setActiveId}
+            onNewQuestion={() => inputRef.current?.focus()}
+            width={sidebar.width}
+          />
+          <ResizeHandle onMouseDown={(e) => sidebar.onMouseDown(e, "right")} />
 
-        <div className="flex flex-1 flex-col overflow-hidden">
-          {turns.length === 0 ? (
-            <WelcomeScreen onAsk={ask} />
-          ) : (
-            <ChatWindow turns={turns} />
-          )}
-          <ChatInput ref={inputRef} disabled={isRunning} onSubmit={ask} />
+          <div className="flex flex-1 flex-col overflow-hidden">
+            {turns.length === 0 ? (
+              <WelcomeScreen onAsk={ask} />
+            ) : (
+              <ChatWindow turns={turns} />
+            )}
+            <ChatInput ref={inputRef} disabled={isRunning} onSubmit={ask} />
+          </div>
+
+          <ResizeHandle onMouseDown={(e) => activityPanel.onMouseDown(e, "left")} />
+          <ActivityPanel trace={activeTurn?.trace ?? []} width={activityPanel.width} />
         </div>
-
-        <ActivityPanel trace={activeTurn?.trace ?? []} />
-      </div>
+      )}
     </div>
   );
 }

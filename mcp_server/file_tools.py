@@ -1,7 +1,3 @@
-"""Direct file-read tool: full raw text for a single market intelligence
-document, for drill-down after a structured filter or semantic search hit.
-"""
-
 import re
 
 from paths import DATA_DIR

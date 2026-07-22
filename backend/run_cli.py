@@ -1,12 +1,10 @@
-"""Dev/test script: runs the agent directly against the MCP server (which
-must already be running) without needing the FastAPI/frontend layers up -
-for quick verification of the agent + skills + tools working end to end.
-
-Run with: uv run backend/run_cli.py "why is young driver loss ratio worsening?"
-"""
-
 import asyncio
 import sys
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 from agent import stream_query
 

@@ -16,12 +16,6 @@ export type AgentEvent =
 
 export const API_BASE = import.meta.env.VITE_AGENT_API_URL ?? "http://localhost:8000";
 
-// EventSource doesn't support POST bodies, so this parses the
-// text/event-stream response from a fetch() call by hand: events are
-// separated by a blank line, each line prefixed "event: " or "data: ". The
-// backend sends a plain "\n" separator (see backend/app.py's
-// EventSourceResponse(..., sep="\n")); \r?\n is tolerated here too in case
-// that ever changes, since sse-starlette's default is "\r\n".
 export async function* streamChat(
   question: string,
   signal?: AbortSignal,

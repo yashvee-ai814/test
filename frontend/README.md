@@ -1,7 +1,8 @@
 # frontend
 
-React + Vite + TypeScript + Tailwind CSS v4 chat UI for the Pricing Analyst Copilot. Talks only to
-`backend`'s SSE `/chat` endpoint — never calls `mcp_server` directly.
+React + Vite + TypeScript + Tailwind CSS v4 UI for the Pricing Analyst Copilot: a chat view (talks to
+`backend`'s SSE `/chat` endpoint) and a Dashboard view (talks to `backend`'s `GET /dashboard`). Never
+calls `mcp_server` directly.
 
 ## Folder structure
 
@@ -25,7 +26,15 @@ src/
   components/trace/
     ActivityPanel.tsx              Right-hand panel: live trace (Trace tab) + static 12-tool
                                     reference grouped by retrieval technique (Tool catalog tab)
-  App.tsx                          Layout shell: Sidebar + chat column + ActivityPanel
+  components/dashboard/
+    Dashboard.tsx                   Fetches GET /dashboard, lays out the panels below
+    LineChart.tsx                   Hand-rolled multi-series SVG line chart (hover crosshair,
+                                     legend, gridlines) - no charting library dependency
+    BarChart.tsx                    Hand-rolled horizontal bar chart, per-bar color override
+    StatTile.tsx                    label/value/sublabel KPI tile
+  App.tsx                          Layout shell: Header view toggle (Copilot / Dashboard) switches
+                                    between the chat layout (Sidebar + chat column + ActivityPanel)
+                                    and the Dashboard view
 ```
 
 ## Tech stack

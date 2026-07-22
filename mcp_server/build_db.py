@@ -1,14 +1,3 @@
-"""One-off loader: JSON -> SQLite for the two genuinely relational data sources
-(claims_performance + regional_weather_claims + conversion_performance).
-
-Run with: uv run mcp_server/build_db.py
-
-Per CLAUDE.md's ground rules, this does NOT just trust the load — it re-verifies
-row counts and the claims/conversion segment-name cross-reference after writing,
-so a bad load fails loudly instead of silently producing a smaller MCP tool
-surface than the source data.
-"""
-
 import json
 import sqlite3
 
@@ -83,9 +72,6 @@ def build() -> None:
            VALUES (:period, :region, :weather_related_claim_count)""",
         claims["regional_weather_claims"],
     )
-    # average_pcw_rank is only present on Price Comparison Website rows in the source
-    # data (the other channels genuinely have no "rank" concept) - normalize to a
-    # present-but-NULL column for the other rows rather than editing the source JSON.
     conversion_records = [
         {**r, "average_pcw_rank": r.get("average_pcw_rank")} for r in conversion["records"]
     ]

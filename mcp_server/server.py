@@ -1,14 +1,9 @@
-"""Pricing Analyst Copilot MCP server - runs as its own standalone microservice
-(streamable-http transport) exposing 12 tools across 4 retrieval techniques:
-direct JSON query, direct file read, typed SQLite query, and vector semantic
-search - plus deterministic math tools. See json_tools.py, file_tools.py,
-sql_tools.py, vector_tools.py, math_tools.py for the implementations, and
-IMPLEMENTATION.md for the design rationale.
-
-Run with: uv run mcp_server/server.py
-"""
-
 import os
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 from fastmcp import FastMCP
 

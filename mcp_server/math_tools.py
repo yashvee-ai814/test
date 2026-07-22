@@ -1,10 +1,3 @@
-"""Deterministic calculation tools. LLMs are unreliable at exact arithmetic
-over multi-point series - any trend, delta, or summary-statistic claim the
-agent makes should come from calling one of these, not from doing the math
-itself, extending the same "never assert a number you haven't actually
-derived from the data" rule to computed numbers, not just retrieved ones.
-"""
-
 import statistics
 
 

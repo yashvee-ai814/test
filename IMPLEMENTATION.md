@@ -288,3 +288,22 @@ survives `create_react_agent`'s `bind_tools()` wrapping, so
 single failed call. Switching to a fully local model via the
 `OLLAMA_CHAT_MODEL` env var avoids this entirely if it becomes disruptive
 during a live demo.
+
+## 9. Data dashboard
+
+A second frontend view (`Header`'s Copilot/Dashboard toggle) shows the underlying data directly, without
+going through the agent at all. `backend/dashboard.py` calls the same MCP tools as the chat agent, but
+bypasses the LLM entirely (no `create_react_agent`, no tool-choice reasoning) — a `GET /dashboard` request
+is a handful of direct MCP tool calls plus light aggregation (mean conversion rate by channel, sentiment
+counts), returned as one JSON payload. This is deliberately a separate code path from `agent.py`, not the
+agent with an empty prompt: the dashboard's job is "show me the data," not "reason about the data," so it
+shouldn't pay for or depend on an LLM call.
+
+The charts (`frontend/src/components/dashboard/{LineChart,BarChart}.tsx`) are hand-rolled SVG rather than a
+charting library dependency, built against the dataviz skill's validated default categorical palette
+(`frontend/src/index.css`'s `--viz-series-*` custom properties, light and dark) and mark specs (2px lines,
+≥8px end-markers with a 2px surface ring, hairline gridlines, a hover crosshair+tooltip, a legend for
+multi-series charts). The one deliberate deviation from strict categorical assignment: the competitor
+premium bar chart uses a 2-color identity split (Aviva vs. everyone else) rather than one hue per
+competitor, because "us vs. the market" is the actual comparison being made, not eight independent
+categories.
